@@ -4,11 +4,11 @@ import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
 
-const consulta= `
+const consulta= (tituloCharla) => (`
 	{
 		charlaitemLista(
 			first: 3, 
-			charla_Titulo: "#bandadjango", 
+			charla_Titulo: "${tituloCharla}", 
 			orderBy: ["-texto__fhCreado"]
 		) {
 			edges {
@@ -22,7 +22,7 @@ const consulta= `
 			}
 		}
 	}
-`;
+`);
 
 export default function Charla() {
 	const { charlaid } = useParams(); 
@@ -33,7 +33,7 @@ export default function Charla() {
 	
 	useEffect(() => {
 		(async () => {
-			const res= await servidorPodemosAprender.fetch({query: consulta});
+			const res= await servidorPodemosAprender.fetch({query: consulta('#'+charlaid)});
 			setTextos(res.data.charlaitemLista.edges);
 			//TODO: errores de red, etc
 		})();
