@@ -12,7 +12,7 @@ export function useRutasConLogin() {
 	const { from } = location.state || { from: { pathname: '/' } };
 	const rutaDeDondeViene = from;
 
-	console.log("rutaDeDondeViene", rutaDeDondeViene, location.state);
+	//DBG: console.log("rutaDeDondeViene", rutaDeDondeViene, location.state);
 	const login = (usuario, pass) => {
 		servidorPodemosAprender.login(usuario,pass).then(() => {
 			history.replace(rutaDeDondeViene);

@@ -1,22 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom";
+//INFO: punto de entrada principal a la App, mantenerlo limpio, tiene que servir de indice
+
 import Link from "@material-ui/core/Link";
-import { useState, useEffect } from "react";
-import { Link as RouterLink, useParams, useHistory } from "react-router-dom";
-
-import {
-  apiLogin,
-  apiNecesitoLoginP,
-  fetchConToken,
-  usuarioLeer,
-	tokenBorrar
-} from "./services/pa-api";
-
+import {Link as RouterLink} from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
+
+import { ProvideServidorPodemosAprender} from './contexts/ServidorPodemosAprender';
 
 import "./index.css";
 
-import AppBar from "./components/AppMenuYMarco";
+import AppMenuYMarco from "./components/AppMenuYMarco";
 
 import Login from "./pages/Login/Login";
 import QueHago from "./pages/QueHago";
@@ -25,12 +17,12 @@ import Charla from "./pages/Charla";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import Badge from "@material-ui/core/Badge";
 
-const Rutas = [
+const MenuYRutas = [
   {
     path: "/",
     dsc: "Inicio",
     exact: true,
-    main: () => (
+    pagina: () => (
       <>
         <h2>Home</h2>
         Podes ir a{" "}
@@ -47,57 +39,18 @@ const Rutas = [
 	{
 		path: "/login",
 		dsc: "Login",
-		main: () => <Login/>,
+		necesitaLogin: false,
+		pagina: () => <Login/>,
 	},
-  {
-    path: "/logout",
-    dsc: "Logout",
- 		main: () => {
-      const LogOut = () => {
-        console.log("Logout");
-        //VER: https://reactrouter.com/web/api/history
-        const history = useHistory();
-        useEffect(() => {
-          console.log("Logout useEffect");
-
-          tokenBorrar(); //A: Borramos los tokens
-          //history.replace("/");
-          console.log("Logout useEffect DONE");
-        });
-
-        return <h1>LogOut</h1>;
-			};
-			return <LogOut />
-    },
-	},
- /*   main: () => {
-			console.log("Logout");
-
-			const componente= () => {
-				console.log("Logout componente");
-				const history= useHistory();
-				
-				useEffect(() => {
-					console.log("Logout Effect");
-					history.replace('/');
-				});
-
-				return <h2>Ya no estas logueado</h2>
-			};
-
-			return <componente />
-		},
-  },
-*/
 	{
     path: "/como-voy",
     dsc: "¿Cómo voy?",
-    main: () => <h2>Bubblegum</h2>,
+    pagina: () => <h2>Bubblegum</h2>,
   },
   {
     path: "/que-hago",
     dsc: "¿Qué hago?",
-    main: () => <QueHago />,
+    pagina: () => <QueHago />,
     icono: (
       <Badge badgeContent={4} color="primary">
         <InboxIcon />
@@ -107,12 +60,19 @@ const Rutas = [
   {
     path: "/charla/:charlaid",
     dsc: "Charlas",
-    main: () => <Charla />,
+    pagina: () => <Charla />,
   },
+	{ divisor: true },
+  {
+    dsc: "Logout",
+		accion: (contexto) => { contexto.logout() }
+	},
 ];
 
-const NECESITA_LOGIN = {};
-
 export default function App() {
-	return <AppBar rutas={Rutas} />;
+	return (
+    <ProvideServidorPodemosAprender>
+			<AppMenuYMarco menu_y_rutas={MenuYRutas} />;
+    </ProvideServidorPodemosAprender>
+	)
 }
