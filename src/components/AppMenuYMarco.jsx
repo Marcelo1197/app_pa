@@ -95,7 +95,7 @@ const AccionNoImplementada = () => alert('¿Te animás a implementarla vos?');
 
 function ListItemLink(props) {
 	const rutasConLoginHook= useRutasConLogin()
-	const { icon, primary, to, accion } = props;
+	const { icon, primary, to, accion, cerrarMenu } = props;
 
 	const renderLink = React.useMemo(
 		() => React.forwardRef((itemProps, ref) => (
@@ -108,13 +108,14 @@ function ListItemLink(props) {
 	const accionOk = accion || (to ? null : AccionNoImplementada);
 	const onClick= (accionOk 
 		? (() => {
-			console.log('Click',primary); 
+			//DBG: console.log('Click',primary); 
+			cerrarMenu();	
 			accionOk(rutasConLoginHook);
 			}) 
-		: null); //A: paso el hook para que pueda ej logout
+		: cerrarMenu); //A: paso el hook para que pueda ej logout
 
 	const renderLinkOk = (to !=null) ? renderLink : ((itemProps) => (<Link {...itemProps}/>));
-	console.log('ListItemLink', primary, accionOk!=null, to)
+	//DBG: console.log('ListItemLink', primary, accionOk!=null, to)
 
 	return (
 		<li key={primary+'___'+to}>
@@ -206,7 +207,7 @@ export default function AppMenuLateral(props) {
 					ruta.divisor 
 					? <Divider />
 					: ruta.dsc
-					? ( <ListItemLink accion={ruta.accion} to={ruta.path} icon={ruta.icono} primary={ruta.dsc} /> )
+					? ( <ListItemLink accion={ruta.accion} to={ruta.path} icon={ruta.icono} primary={ruta.dsc} cerrarMenu={handleDrawerClose} /> )
 					: null
 				))
 				.filter( e => e!=null) //A: solo si no son null

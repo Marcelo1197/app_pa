@@ -20,7 +20,9 @@ export function useRutasConLogin() {
 	};
 
 	const logout = () => {
-		servidorPodemosAprender.logout(() => history.push('/'));
+		servidorPodemosAprender
+			.logout()
+			.then(() => history.push('/'));
 	};
 
 	return {login, rutaDeDondeViene, logout, usuario: servidorPodemosAprender.usuario, history};

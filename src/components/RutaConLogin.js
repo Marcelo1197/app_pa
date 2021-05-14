@@ -10,7 +10,7 @@ export function RutaConLogin({ children, necesitaLogin, ...otrosParametros }) { 
 		<Route
 			{...otrosParametros}
 			render={({ location }) => {
-				console.log("RutaConLogin", usuario, necesitaLogin, otrosParametros.path);
+				//DBG: console.log("RutaConLogin", usuario, necesitaLogin, otrosParametros.path);
 				if ( (necesitaLogin==false) || (usuario!=null) ) {
 					return  children;
 				}
