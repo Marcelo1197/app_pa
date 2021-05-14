@@ -48,7 +48,7 @@ return (
 // S: como se usa
 
 function ComponenteQueUsaContexto(props) { 
-const contextoConsola= useContextoConsola(); //A: consigo el contexto
+	const contextoConsola= useContextoConsola(); //A: consigo el contexto
 	const [miValor, setMiValor]= useState(); 
 
 	return (
@@ -72,11 +72,16 @@ function ComponenteIntermedioQueNoSeEnteraDeNadaDos() {
 	return <ComponenteQueUsaContexto nombre="Dos" style={{background: '#80FF80'}}  />
 }
 
+function ComponenteQueNoSeActualiza({ cuando }) {
+	return <div>Me dibuje a las {cuando+''}</div>;
+}
+
 export default function ComponenteQueLosEnvuelveYCreaElContexto() {
 	return (
 		<ProvideContextoConsola>	
 			<ComponenteIntermedioQueNoSeEnteraDeNadaUno />
 			<ComponenteIntermedioQueNoSeEnteraDeNadaDos />
+			<ComponenteQueNoSeActualiza cuando={new Date()}/>
 			<p>También podés usar en la consola <code>simularEventoExternoQueCambiaValor</code></p>
 			<p>Este texto no depende de nada que se actualice {new Date()+''}</p>
 		</ProvideContextoConsola>
