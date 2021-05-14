@@ -181,4 +181,4 @@ export function esErrorNecesitaLogin(ex) {
 	return ex.message === ErrorMsgNecesitaLogin;
 }
 
-export default { fetchConToken, apiLogin, apiLogout, CFG, esErrorNecesitaLogin }
+export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, CFG, esErrorNecesitaLogin }

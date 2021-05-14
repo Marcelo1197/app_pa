@@ -5,7 +5,7 @@
 
 ////////////////////////////////////////////////////////////
 //S: que necesitamos
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 
 import PaApi from "../services/pa-api";
 /* DBG { 
@@ -25,6 +25,17 @@ export function useServidorPodemosAprender() { //U: tus componentes que estan en
 function useProvideServidorPodemosAprender() { //U: este se usa en el componente provider para envolver los hijos en este contexto
   const [usuario, setUsuario] = useState(null); //U: devuelve usuario y eso lo hace reactivo (actualiza otros)
 	//TODO: agregamos otro estado para ultimo mensaje de error?
+
+	useEffect(() => {
+		(async () => { //A: para usar await, creo una funcion anonima y la llamo aca mismo
+			const necesitoLogin= await PaApi.apiNecesitoLoginP();
+			const usuario= PaApi.usuarioLeer(); 
+			console.log("useProvideServidorPodemosAprender apiNecesitoLoginP",necesitoLogin,usuario);
+			if (!necesitoLogin) {
+				setUsuario( usuario );
+			}
+		})();
+	}, []);
 
   const login = (usuario, pass) => {
     return (
