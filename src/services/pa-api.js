@@ -34,8 +34,8 @@ export function usuarioLeer() {
 
 export function tokenBorrar() {
   //U: ej para cerrar sesion en navegador publico
-  localStorage.tokens = null;
-  localStorage.usuario = null;
+  localStorage.tokens = '';
+  localStorage.usuario = '';
   //TODO: ademas deberia invalidarlo en el servidor
 }
 

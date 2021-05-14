@@ -9,11 +9,15 @@ export function RutaConLogin({ children, necesitaLogin, ...otrosParametros }) { 
 	return (
 		<Route
 			{...otrosParametros}
-			render={({ location }) =>
-				((necesitaLogin==false) || (usuario!=null)) 
-				?  children 
-				: <Redirect to={{ pathname: '/login', state: { from: location } }} />
-			}
+			render={({ location }) => {
+				console.log("RutaConLogin", usuario, necesitaLogin, otrosParametros.path);
+				if ( (necesitaLogin==false) || (usuario!=null) ) {
+					return  children;
+				}
+				else {
+					return ( <Redirect to={{ pathname: '/login', state: { from: location } }} /> )
+				}
+			}}
 		/>
 	);
 }

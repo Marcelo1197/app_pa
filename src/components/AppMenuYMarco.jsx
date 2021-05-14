@@ -11,6 +11,8 @@ import {
 	Link as RouterLink,
 	useHistory,
 } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+
 import { useState, useEffect } from "react";
 import { useRutasConLogin } from '../hooks/useRutasConLogin';
 import { RutaConLogin } from './RutaConLogin';
@@ -99,14 +101,24 @@ function ListItemLink(props) {
 		() => React.forwardRef((itemProps, ref) => (
 			<RouterLink to={to} ref={ref} {...itemProps} />
 		)),
-		[to, accion],
+		[to],
 	);
 
+
 	const accionOk = accion || (to ? null : AccionNoImplementada);
-	const onClick= accionOk ? (() => accionOk(rutasConLoginHook)) : null; //A: paso el hook para que pueda ej logout
+	const onClick= (accionOk 
+		? (() => {
+			console.log('Click',primary); 
+			accionOk(rutasConLoginHook);
+			}) 
+		: null); //A: paso el hook para que pueda ej logout
+
+	const renderLinkOk = (to !=null) ? renderLink : ((itemProps) => (<Link {...itemProps}/>));
+	console.log('ListItemLink', primary, accionOk!=null, to)
+
 	return (
-		<li key={props.to}>
-			<ListItem button component={renderLink} onClick={onClick} >
+		<li key={primary+'___'+to}>
+			<ListItem button component={renderLinkOk} onClick={onClick} >
 				{icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
 				{to
 					? <ListItemText primary={primary} />
@@ -115,7 +127,9 @@ function ListItemLink(props) {
 			</ListItem>
 		</li>
 	);
+
 }
+
 
 //VER: https://material-ui.com/components/drawers/#persistent-drawer
 export default function AppMenuLateral(props) {
@@ -175,9 +189,9 @@ export default function AppMenuLateral(props) {
 							<RutaConLogin
 								key={index}
 								path={datosRuta.path}
-								exact={datosRuta.exact}
+								exact={datosRuta.esPrefijo!=true}
 								children={<datosRuta.pagina />}
-								necesitaLogin={datosRuta.necesitaLogin}	
+								necesitaLogin={!datosRuta.noNecesitaLogin}	
 							/>
 					))}
 				</Switch>	
@@ -186,11 +200,17 @@ export default function AppMenuLateral(props) {
 	
 	const ItemsDelMenuConLinksALasRutas= () => (
 		<List>
-			{props.menu_y_rutas.map((ruta, index) => (
-				ruta.divisor 
-				? <Divider />
-				: ( <ListItemLink accion={ruta.accion} to={ruta.path} icon={ruta.icono} primary={ruta.dsc} /> )
-			))}
+			{
+				props.menu_y_rutas
+				.map((ruta, index) => (
+					ruta.divisor 
+					? <Divider />
+					: ruta.dsc
+					? ( <ListItemLink accion={ruta.accion} to={ruta.path} icon={ruta.icono} primary={ruta.dsc} /> )
+					: null
+				))
+				.filter( e => e!=null) //A: solo si no son null
+			}
 		</List>
 	);
 

@@ -35,10 +35,14 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
   }
 
   const logout = () => {
+		console.log('useProvideServidorPodemosAprender logout');
     return (
 			PaApi.apiLogout()
-				.then(() => { setUsuario(null); })
-		)
+				.then(() => { 
+					console.log('useProvideServidorPodemosAprender logout then'); 
+					setUsuario(null); 
+				})
+		);
   }
 
 	const fetch = (query) => {
