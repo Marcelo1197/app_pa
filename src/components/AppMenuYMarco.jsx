@@ -8,8 +8,10 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link as RouterLink
+  Link as RouterLink,
+	useHistory,
 } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -25,6 +27,16 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+
+import Login from "../pages/Login/Login";
+import {
+  apiLogin,
+  apiNecesitoLoginP,
+  fetchConToken,
+  usuarioLeer,
+	tokenBorrar
+} from "../services/pa-api";
+
 
 const drawerWidth = 240;
 
@@ -103,6 +115,90 @@ function ListItemLink(props) {
   );
 }
 
+const LoginSiNecesita= (props) => {
+	const [necesitaLogin, setNecesitaLogin]= useState(true);
+	const [cuandoRevise, setCuandoRevise]= useState(0);
+
+	const history= useHistory();
+	console.log("LoginSiNecesita", props);
+
+	useEffect(() => {
+		(async () => {
+			const necesita= await apiNecesitoLoginP();
+			console.log("LoginSiNecesita apiNecesitoLoginP",necesita);
+			setNecesitaLogin(necesita);
+			setCuandoRevise(props.vez);
+		})();
+	},[props.vez, history]);
+	
+	if (necesitaLogin) {
+		return <Login />
+	}
+	else {
+		return props.children;
+	}
+}
+
+const authContext = createContext();
+
+function ProvideAuth({ children }) {
+  const auth = useProvideAuth();
+  return (
+    <authContext.Provider value={auth}>
+      {children}
+    </authContext.Provider>
+  );
+}
+
+function useAuth() {
+  return useContext(authContext);
+}
+
+function useProvideAuth() {
+  const [user, setUser] = useState(null);
+
+  const signin = cb => {
+    return fakeAuth.signin(() => {
+      setUser("user");
+      cb();
+    });
+  };
+
+  const signout = cb => {
+    return fakeAuth.signout(() => {
+      setUser(null);
+      cb();
+    });
+  };
+
+  return {
+    user,
+    signin,
+    signout
+  };
+}
+
+function PrivateRoute({ children, ...rest }) {
+  let auth = useAuth();
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        auth.user ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
 //VER: https://material-ui.com/components/drawers/#persistent-drawer
 export default function AppMenuYMarco(props) {
   const classes = useStyles();
@@ -171,16 +267,28 @@ export default function AppMenuYMarco(props) {
         className={clsx(classes.content, { [classes.contentShift]: open, })}
       >
         <div className={classes.drawerHeader} />
-				<Switch>
-					{props.rutas.map((route, index) => (
-						<Route
-							key={index}
-							path={route.path}
-							exact={route.exact}
-							children={<route.main />}
-						/>
-					))}
-				</Switch>	
+				<LoginSiNecesita vez={Date.now()}>
+					<Switch>
+						{props.rutas.map((route, index) => (
+							route.path == '/login' ?
+								<Route
+									key={index}
+									path={route.path}
+									exact={route.exact}
+									children={<route.main />}
+									onEnter={requireAuth}
+								/>
+								:
+								<PrivateRoute
+									key={index}
+									path={route.path}
+									exact={route.exact}
+									children={<route.main />}
+									onEnter={requireAuth}
+								/>
+						))}
+					</Switch>	
+				</LoginSiNecesita>
       </main>
     </div>
   </Router>

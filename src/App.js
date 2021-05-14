@@ -2,14 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Link from "@material-ui/core/Link";
 import { useState, useEffect } from "react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams, useHistory } from "react-router-dom";
 
 import {
   apiLogin,
   apiNecesitoLoginP,
   fetchConToken,
   usuarioLeer,
-} from "./services/pa-auth";
+	tokenBorrar
+} from "./services/pa-api";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -43,7 +44,52 @@ const Rutas = [
       </>
     ),
   },
+	{
+		path: "/login",
+		dsc: "Login",
+		main: () => <Login/>,
+	},
   {
+    path: "/logout",
+    dsc: "Logout",
+ 		main: () => {
+      const LogOut = () => {
+        console.log("Logout");
+        //VER: https://reactrouter.com/web/api/history
+        const history = useHistory();
+        useEffect(() => {
+          console.log("Logout useEffect");
+
+          tokenBorrar(); //A: Borramos los tokens
+          //history.replace("/");
+          console.log("Logout useEffect DONE");
+        });
+
+        return <h1>LogOut</h1>;
+			};
+			return <LogOut />
+    },
+	},
+ /*   main: () => {
+			console.log("Logout");
+
+			const componente= () => {
+				console.log("Logout componente");
+				const history= useHistory();
+				
+				useEffect(() => {
+					console.log("Logout Effect");
+					history.replace('/');
+				});
+
+				return <h2>Ya no estas logueado</h2>
+			};
+
+			return <componente />
+		},
+  },
+*/
+	{
     path: "/como-voy",
     dsc: "¿Cómo voy?",
     main: () => <h2>Bubblegum</h2>,
@@ -68,17 +114,5 @@ const Rutas = [
 const NECESITA_LOGIN = {};
 
 export default function App() {
-  const [statusUsuario, setStatusUsuario] = useState("");
-
-  useEffect(() => {
-    apiNecesitoLoginP().then((necesitoLogin) => {
-      setStatusUsuario(necesitoLogin ? NECESITA_LOGIN : usuarioLeer());
-    });
-  }, []);
-
-  if (statusUsuario == NECESITA_LOGIN) {
-    return <Login setStatusUsuario={setStatusUsuario} />;
-  } else {
-    return <AppBar rutas={Rutas} />;
-  }
+	return <AppBar rutas={Rutas} />;
 }

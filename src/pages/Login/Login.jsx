@@ -1,12 +1,16 @@
 //INFO: pantalla de login en podemos aprender
 
 import { useState, useEffect } from 'react';
-import { apiLogin, apiNecesitoLoginP, fetchConToken, usuarioLeer } from '../../services/pa-auth';
+import { useHistory } from "react-router-dom";
+import { CFG, apiLogin, apiNecesitoLoginP, fetchConToken, usuarioLeer } from '../../services/pa-api';
 
-import LoginTemplate from "./LoginTemplate"
+import LoginTemplate from "./LoginTemplate";
 
-export default function Login({setStatusUsuario}) {
+CFG.api_url= 'http://localhost:8000'; //A: cambie a servidor de pruebas //TODO: hacer configurable
 
+export default function Login() {
+
+	const history= useHistory();
 	const [nombreUsuario, setNombreUsuario] = useState("")
 	const [contraseniaUsuario, setContraseniaUsuario] = useState("")
 	const [preLoader, setPreLoader] = useState(false)
@@ -22,7 +26,7 @@ export default function Login({setStatusUsuario}) {
 	
 	const handleClickLogin = async (e) => {
 		e.preventDefault();
-		if (contraseniaUsuario == "" || nombreUsuario == "") {
+		if (contraseniaUsuario === "" || nombreUsuario === "") {
       alert("Debe completar los dos campos");
     }
 		else {
@@ -36,7 +40,8 @@ export default function Login({setStatusUsuario}) {
 			if (res.detail === "No active account found with the given credentials") {
 				alert("Usuario o contraseña incorrecto!");
 			} else {
-				setStatusUsuario(usuarioLeer())
+				console.log('Login exitoso');
+				history.replace('/?_'+Date.now());	
 			}
 		}
 	}

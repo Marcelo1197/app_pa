@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { fetchConToken } from "../services/pa-api";
 
@@ -48,9 +48,11 @@ const fetchData = async (url, opciones, setPartData) => {
     });
   }
 };
-//DBG: window.fetchData = fetchData;
+//DBG: 
+window.fetchData = fetchData;
 
 export const usePaApi = (url, opciones = {}) => {
+	// eslint-disable-next-line
   const [hookState, setHookState, setPartData] = useHookState({
     //U: Devolvemos un estado de React que lanza eventos para actualizar la pantalla
     status: API_STATE_CARGANDO,
