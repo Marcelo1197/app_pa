@@ -39,6 +39,7 @@ const fakeAuth = {
   isAuthenticated: false,
   signin(cb) {
     fakeAuth.isAuthenticated = true;
+		setTimeout(() => setUsuario(null), 10000); //U: simular token expira en 10 segundos
     setTimeout(cb, 100); // fake async
   },
   signout(cb) {

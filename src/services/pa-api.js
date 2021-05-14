@@ -103,6 +103,12 @@ export async function apiLogin(usr, pass) {
 	}
 }
 
+export async function apiLogout() {
+	tokenBorrar();
+	//TODO: invalidarlo en el servidor, por eso la declaramos async
+	return true;
+}
+
 export async function apiNecesitoLoginP() {
   var result = true; //DFLT, necesito login
   const tokX = tokenLeer();
@@ -119,11 +125,13 @@ export async function apiNecesitoLoginP() {
   return result;
 }
 
+const ErrorMsgNecesitaLogin= 'PaApi fetchConToken no tengo token, llamaste apiLogin?';
+
 export async function fetchConToken(data, opciones, url, noQuiereJson) { //U: hace fetch agregando token, y con defaults
   //U: agrega el token a un fetch
   const tok = tokenLeer();
   if (!tok || !tok.access) {
-    throw "token, no tengo";
+    throw new Error(ErrorMsgNecesitaLogin);
   }
 
 	url= url || '/graphql'; //DFLT 
@@ -147,6 +155,7 @@ export async function fetchConToken(data, opciones, url, noQuiereJson) { //U: ha
 		opciones.headers['Content-Type']= opciones.headers['Content-Type'] || 'application/json';
 	}	
 
+	//TODO: excepcion token expiro?
   const res= await fetch(url, opciones);
 	if (noQuiereJson) { 
 		return res;
@@ -168,3 +177,8 @@ fetchData('http://127.0.0.1:8000/graphql',{method:'POST', headers: {
 
 */
 
+export function esErrorNecesitaLogin(ex) {
+	return ex.message === ErrorMsgNecesitaLogin;
+}
+
+export default { fetchConToken, apiLogin, apiLogout, CFG, esErrorNecesitaLogin }
