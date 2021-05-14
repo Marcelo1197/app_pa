@@ -23,17 +23,22 @@ export function useServidorPodemosAprender() { //U: tus componentes que estan en
 
 
 function useProvideServidorPodemosAprender() { //U: este se usa en el componente provider para envolver los hijos en este contexto
-  const [usuario, setUsuario] = useState(null); //U: devuelve usuario y eso lo hace reactivo (actualiza otros)
+	const USUARIO_NO_SE= {usuario: 'no se'}
+  const [usuario, setUsuario] = useState(USUARIO_NO_SE); //U: devuelve usuario y eso lo hace reactivo (actualiza otros)
 	//TODO: agregamos otro estado para ultimo mensaje de error?
 
 	useEffect(() => {
 		(async () => { //A: para usar await, creo una funcion anonima y la llamo aca mismo
 			const necesitoLogin= await PaApi.apiNecesitoLoginP();
 			const usuario= PaApi.usuarioLeer(); 
-			console.log("useProvideServidorPodemosAprender apiNecesitoLoginP",necesitoLogin,usuario);
+			//DBG: console.log("useProvideServidorPodemosAprender apiNecesitoLoginP",necesitoLogin,usuario);
 			if (!necesitoLogin) {
 				setUsuario( usuario );
 			}
+			else {
+				setUsuario( null );
+			}
+
 		})();
 	}, []);
 
@@ -70,6 +75,7 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
 	}
 
   return {
+		USUARIO_NO_SE, //U: estado inicial antes de averiguar si necesito login
     usuario, //U: el estado reactivo para que se actualicen dependientes
     login, //U: funcion para loguearse
     logout, //U: funcion para desloguearse
