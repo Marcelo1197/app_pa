@@ -48,12 +48,13 @@ const MenuYRutas = [
 		dsc: 'Charlas',
     pagina: Charlas,
   },
+
 	{ divisor: true },
 
   {
     dsc: "Logout",
 		accion: (contexto) => { 
-			console.log('Logout'); 
+			//DBG: console.log('Logout'); 
 			contexto.logout(); 
 		}
 	},
