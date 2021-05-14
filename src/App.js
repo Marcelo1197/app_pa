@@ -12,9 +12,8 @@ import Login from './pages/Login/Login';
 import Inicio from './pages/Inicio';
 import QueHago from "./pages/QueHago";
 import Charla from "./pages/Charla";
+import Charlas from "./pages/Charlas";
 
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import Badge from "@material-ui/core/Badge";
 
 const MenuYRutas = [
 	{
@@ -36,20 +35,21 @@ const MenuYRutas = [
   {
     path: "/que-hago",
     dsc: "¿Qué hago?",
-    pagina: () => <QueHago />,
-    icono: (
-      <Badge badgeContent={4} color="primary">
-        <InboxIcon />
-      </Badge>
-    ),
+    pagina: QueHago.PaginaQueHago,
+    icono: <QueHago.IconoQueHago />,
   },
   {
     path: "/charla/:charlaid",
 		esPrefijo: true,
-    dsc: "Charlas",
     pagina: Charla,
   },
+	{
+    path: "/charla/",
+		dsc: 'Charlas',
+    pagina: Charlas,
+  },
 	{ divisor: true },
+
   {
     dsc: "Logout",
 		accion: (contexto) => { 
