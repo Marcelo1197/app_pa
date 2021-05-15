@@ -3,27 +3,8 @@
 import { useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
-import { markdownTransformarHTML } from '../services/pa-lib';
+import { markdownTransformarHTML, fechaLegible } from '../services/pa-lib';
 
-const consulta= (tituloTexto) => (`
-	{
-		textoitemLista(
-			first: 3, 
-			texto_Titulo: "${tituloTexto}", 
-			orderBy: ["-texto__fhCreado"]
-		) {
-			edges {
-				node {
-					texto {
-						fhCreado
-						deQuien { username }
-						texto
-					}
-				}
-			}
-		}
-	}
-`);
 
 export default function PaginaTexto(props) {
 	const { textoid } = useParams(); 
@@ -33,22 +14,12 @@ export default function PaginaTexto(props) {
 	const [datos, setDatos]= useState({...location.state, textoId: textoid })
 	//A: el link puede pasar datos en location, sino los vamos a tener que buscar del servidor
 
-	const servidorPodemosAprender= useServidorPodemosAprender();
-	
-	/*
-	useEffect(() => {
-		(async () => {
-			const res= await servidorPodemosAprender.fetch({query: consulta(textoid)});
-			setTexto(res.data.textoitemLista.edges);
-			//TODO: errores de red, etc
-		})();
-	}, [textoid]);
-	*/
-
+	//VER: (marked) https://reactjs.org/docs/dom-elements.html
 	return (
 		<>
 			<h2>
-				Texto { textoid }
+				De { datos.deQuien }
+				<br />{ fechaLegible(datos.fhCreado) }
 			</h2>
 			<div dangerouslySetInnerHTML={{__html: markdownTransformarHTML(datos.texto).markedHtml}}>
 			</div>

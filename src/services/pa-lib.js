@@ -98,4 +98,37 @@ export function markdownTransformarHTML(src, el_id) { //U: convierte "nuestro" m
 	return t;
 }
 
+//S: fechas **************************************************
+export function fechaLegible(unaFechaTalVezEnTexto) {
+	const unaFecha= new Date(unaFechaTalVezEnTexto);
+	const ahora= new Date();
+	const unaFecha_enSegundos= unaFecha.getTime()/1000;
+	const ahora_enSegundos= ahora.getTime()/1000;
+	let diffEnSegundos = unaFecha_enSegundos - ahora_enSegundos;
+	let pfx='dentro de ';
+	if (diffEnSegundos<0) {
+		pfx= 'hace ';
+		diffEnSegundos= 0 - diffEnSegundos;
+	}
+
+	if (diffEnSegundos<60) { return `${pfx}${diffEnSegundos.toFixed(0)}` }
+	else if (diffEnSegundos<60*60) { return `${pfx}${(diffEnSegundos / 60).toFixed(0)}minutos` }
+	else if (diffEnSegundos<60*60*48) { return `${pfx}${(diffEnSegundos / (60*60)).toFixed(1)}horas` }
+	else if (diffEnSegundos<60*60*24*30) { return `${pfx}${(diffEnSegundos / (60*60*24)).toFixed(1)}días` }
+
+	return unaFecha.toLocaleString();
+}
+
+export function fechaParaTexto(unTexto, siNoEsFecha) {
+	try { return unTexto ? new Date(unTexto) : siNoEsFecha; }
+	catch (ex) { return siNoEsFecha; }
+}
+
+export function fechasSonIguales(f1,f2,lasDosNulasTambien) { //U: comparar fechas de una forma segura (Date son objetos, aunque veas la misma fecha no son iguales si no son el mismo)
+	const r= (f1==null || f2==null) 
+		? (f1==f2 && lasDosNulasTambien)
+		: f1.getTime()==f2.getTime();
+	return r;
+}
+
 

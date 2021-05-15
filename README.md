@@ -20,3 +20,16 @@ Se puede partir de un ejemplo como /pages/QueHago.jsx
 Buscar componentes en https://material-ui.com/components/avatars/
 
 En /src/App.js importar la nueva pantalla y agregarla a las rutas como las otrás
+
+
+#### Queries
+
+~~~
+{ 
+charlaitemLista(textoId: "VGV4dG9Ob2RlOjQyNQ==") {
+  edges { node { charla { titulo }, orden } }
+}
+texto(id: "VGV4dG9Ob2RlOjQyNQ==") { texto }
+}
+~~~
+

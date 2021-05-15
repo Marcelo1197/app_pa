@@ -13,7 +13,7 @@ import Inicio from './pages/Inicio';
 import QueHago from "./pages/QueHago";
 import PaginaTexto from './pages/Texto';
 import Charla from "./pages/Charla";
-import Charlas from "./pages/Charlas";
+import Textos from "./pages/Textos";
 
 
 const MenuYRutas = [
@@ -50,9 +50,10 @@ const MenuYRutas = [
     pagina: Charla,
   },
 	{
-    path: "/charla/",
-		dsc: 'Charlas',
-    pagina: Charlas,
+    path: "/textos/",
+		esPrefijo: true,
+		dsc: 'Textos',
+    pagina: Textos,
   },
 
 	{ divisor: true },
