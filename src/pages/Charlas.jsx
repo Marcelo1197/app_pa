@@ -16,7 +16,7 @@ const consulta= (pagina) => {
 			) {edges { node 
 			{
 				charla { titulo }
-				texto { fhCreado texto deQuien { username } }
+				texto { id fhCreado texto deQuien { username } }
 			}
 		}}}
 	`;
@@ -41,6 +41,7 @@ export default function Charla() {
 				fhCreado: item.node.texto.fhCreado,
 				deQuien: item.node.texto.deQuien.username,
 				texto: item.node.texto.texto,
+				textoId: item.node.texto.id,
 			}));	
 
 			//DBG: console.log(JSON.stringify(datos, null, 1));
@@ -66,7 +67,9 @@ export default function Charla() {
 								{charla.fhCreado} 
 								por 
 								{charla.deQuien} 
+								<Link to={{pathname: `/texto/${charla.textoId}`, state: charla}}>
 								<div>{charla.texto.substr(0,200)}</div>
+								</Link>
 							</li>
 							))
 						}

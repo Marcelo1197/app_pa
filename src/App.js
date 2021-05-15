@@ -11,6 +11,7 @@ import Login from './pages/Login/Login';
 
 import Inicio from './pages/Inicio';
 import QueHago from "./pages/QueHago";
+import PaginaTexto from './pages/Texto';
 import Charla from "./pages/Charla";
 import Charlas from "./pages/Charlas";
 
@@ -39,6 +40,11 @@ const MenuYRutas = [
     icono: <QueHago.IconoQueHago />,
   },
   {
+    path: "/texto/:textoid",
+		esPrefijo: true,
+    pagina: PaginaTexto,
+  },
+	{
     path: "/charla/:charlaid",
 		esPrefijo: true,
     pagina: Charla,
