@@ -69,9 +69,9 @@ export default function Texto() {
 			</h2>
 			{ textos 
 				? (<> 
-						<ul>
+						<>
 						{ textos.map( (texto, index) => (
-							<li key={index}>
+							<div style={{margin: '10px'}} key={index}>
 								<Link 
 									to={{pathname: `/texto/${texto.textoId}`, state: texto}}
 								>{fechaLegible( texto.fhCreado )}
@@ -79,13 +79,13 @@ export default function Texto() {
 									to={{pathname: `/TODO/${texto.deQuien}`, state: texto}}
 								>{texto.deQuien}
 								</Link>
-								<MarkdownMostrar>
-									{texto.texto.substr(0,200)}
+								<MarkdownMostrar style={{'max-height': '10em', 'max-width': '80vw', overflow: 'hidden'}}>
+									{texto.texto.substr(0,300)}
 								</MarkdownMostrar>
-							</li>
+							</div>
 							))
 						}
-						</ul>
+						</>
 						<Button 
 							to={{search: `?fh_max=${fh_min.toISOString()}`}}
 							component={Link}
