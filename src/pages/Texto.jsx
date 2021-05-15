@@ -3,7 +3,8 @@
 import { useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
-import { markdownTransformarHTML, fechaLegible } from '../services/pa-lib';
+import { markdownTransformarHTML, fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
+import MarkdownMostrar from '../components/MarkdownMostrar';
 
 
 export default function PaginaTexto(props) {
@@ -21,8 +22,9 @@ export default function PaginaTexto(props) {
 				De { datos.deQuien }
 				<br />{ fechaLegible(datos.fhCreado) }
 			</h2>
-			<div dangerouslySetInnerHTML={{__html: markdownTransformarHTML(datos.texto).markedHtml}}>
-			</div>
+			<MarkdownMostrar>
+				{datos.texto}
+			</MarkdownMostrar>
 		</>
 	)
 }

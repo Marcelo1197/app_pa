@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useUrlSearchParams } from '../hooks/useUrlSearchParams';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
-import { markdownTransformarHTML, fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
+import { fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
+
+import MarkdownMostrar from '../components/MarkdownMostrar';
 
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
@@ -63,7 +65,7 @@ export default function Texto() {
 	return (
 		<>
 			<h2>
-				Textos {fh_max ? `(desde ${fh_max.toString()})`: ''}
+				Textos {fh_max ? `(desde ${fechaLegible(fh_max)})`: ''}
 			</h2>
 			{ textos 
 				? (<> 
@@ -77,7 +79,9 @@ export default function Texto() {
 									to={{pathname: `/TODO/${texto.deQuien}`, state: texto}}
 								>{texto.deQuien}
 								</Link>
-								<div>{texto.texto.substr(0,200)}</div>
+								<MarkdownMostrar>
+									{texto.texto.substr(0,200)}
+								</MarkdownMostrar>
 							</li>
 							))
 						}
