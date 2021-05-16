@@ -2,6 +2,18 @@
 
 import marked from 'marked';
 
+//S: urls ****************************************************
+export function urlParamsParaDiccionario(params) {
+	const r= Object.entries(params)
+		.filter(([k,v]) => v!=null)
+		.map( ([k,v]) => 
+			`${k}=${encodeURIComponent( v instanceof Date ? v.toISOString() : (v||'') )}`
+		)
+		.join('&'); 
+	return r;
+}
+
+
 //S: lib, encode ************************************************************
 function encode64(data) {
   let r = "";

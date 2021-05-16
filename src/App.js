@@ -63,6 +63,7 @@ const MenuYRutas = [
     path: '/devel/',
 		dsc: 'Modo  Desarrollo',
     pagina: PaginaModoDesarrollo,
+		noNecesitaLogin: true,
   },
 
 	{ divisor: true },

@@ -32,7 +32,7 @@ export default function PaginaTexto(props) {
 				</>
 			</Breadcrumbs>
 				
-			<MarkdownMostrar>
+			<MarkdownMostrar contexto={datos}>
 				{datos.texto}
 			</MarkdownMostrar>
 		</>

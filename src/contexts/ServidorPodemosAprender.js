@@ -10,8 +10,7 @@ import { useContext, createContext, useState, useEffect } from "react";
 import PaApi from "../services/pa-api";
 /* DBG { 
 window.PaApi= PaApi;
-PaApi.CFG.api_url='http://localhost:8000';
- } DBG  */
+} DBG  */
 
 ////////////////////////////////////////////////////////////
 //S: el contexto

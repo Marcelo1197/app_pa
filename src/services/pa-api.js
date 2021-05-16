@@ -1,13 +1,14 @@
 //INFO: API REST CON TOKEN en si.podemosaprender.org
 // escribo funciones que se puedan probar por separado, despues las junto
 
-export const CFG = {
+const CFG = {
 	api_url: 'https://si.podemosaprender.org', //U: para usar otro servidor si queres
 }
 
 //S: guardar el token aunque se cierre la app o pagina
 export function tokenGuardar(tokens, usuario) {
   //U: guarda los tokens aunque cargue de nuevo la pagina/app
+	tokens.api_url= CFG.api_url; //A: me guardo la url de donde los obtuve
   localStorage.tokens = JSON.stringify(tokens);
   localStorage.usuario = usuario;
 }
@@ -181,4 +182,17 @@ export function esErrorNecesitaLogin(ex) {
 	return ex.message === ErrorMsgNecesitaLogin;
 }
 
-export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, CFG, esErrorNecesitaLogin }
+//S: solo para desarrollo, SEC: nunca en prod ################
+//SEC: si nos cambian la url via javascript en un texto, nos pueden hacer mandar user y pass a cualquier servidor
+export function desarrolloSolamenteInit() {
+	const u= localStorage.pa_api_desarrollo;
+	if (u) { CFG.api_url= u }
+	return CFG.api_url;
+}
+
+export function desarrolloSolamenteUrl(url) {
+	CFG.api_url= url;
+	localStorage.pa_api_desarrollo= url;
+}
+
+export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin }

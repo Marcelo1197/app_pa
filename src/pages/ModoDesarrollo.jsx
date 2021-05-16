@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
-import PaApi from "../services/pa-api";
+import PaApi, { desarrolloSolamenteInit, desarrolloSolamenteUrl } from "../services/pa-api";
 
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+
+desarrolloSolamenteInit(); 
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -30,7 +32,7 @@ export default function PaginaModoDesarrollo() {
 
 	const servidorPodemosAprender= useServidorPodemosAprender();
 	const [state, setState]= useState({
-		servidor: PaApi.CFG.api_url,
+		servidor: desarrolloSolamenteInit()
 	});
 
 	window.servidorPodemosAprender= servidorPodemosAprender;
@@ -44,7 +46,7 @@ export default function PaginaModoDesarrollo() {
 		let servidor = cual; //DFLT
 		if (cual=='local') { servidor= 'http://localhost:8000'; }
 		else if (cual=='prod') { servidor= 'https://si.podemosaprender.org'; } 
-		PaApi.CFG.api_url= servidor;
+		desarrolloSolamenteUrl(servidor);
 		setState({servidor});
 	}
 
