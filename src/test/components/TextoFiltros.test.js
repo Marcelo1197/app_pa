@@ -27,7 +27,7 @@ afterEach(() => {
 	//A: cleanup on exiting
 });
 
-test('Vacio si no hay filtros', () => { 
+test('Un filtro solo, y lo elimino', () => { 
 	const cuandoCambiaFiltros= jest.fn(); //VER: https://jestjs.io/docs/mock-functions
 	const filtrosInicial= {fh_max: new Date().toISOString()};
 
@@ -42,6 +42,29 @@ test('Vacio si no hay filtros', () => {
 
 	const btnFHMax = xpathFind("//button//*[text()='ahora']"); //A: hay varios elementos dentro del button
 	act( () => { click(btnFHMax); });
-	expect(cuandoCambiaFiltros.mock.calls.length).toBe(1);
-	expect(cuandoCambiaFiltros.mock.calls[0][0]).toEqual({fh_max: null});
+
+	expect(cuandoCambiaFiltros.mock.calls.length).toBe(1); //A: la llamaron una vez
+	expect(cuandoCambiaFiltros.mock.calls[0][0]).toEqual({fh_max: null}); //A: el parametro fue eliminar ese filtro
+
+});
+
+test('Varios filtros, elimino uno', () => { 
+	const cuandoCambiaFiltros= jest.fn(); //VER: https://jestjs.io/docs/mock-functions
+	const filtrosInicial= {fh_max: new Date().toISOString(), de: 'mauriciocap'};
+
+	act( () => {
+		render(
+			<TextoFiltros filtros={filtrosInicial} setFiltros={cuandoCambiaFiltros} />,
+			container
+		)		
+	});
+
+	expect(container.textContent).toBe('ahoramauriciocap');
+
+	const btnFHMax = xpathFind("//button//*[text()='ahora']"); //A: hay varios elementos dentro del button
+	act( () => { click(btnFHMax); });
+
+	expect(cuandoCambiaFiltros.mock.calls.length).toBe(1); //A: la llamaron una vez
+	expect(cuandoCambiaFiltros.mock.calls[0][0]).toEqual({fh_max: null, de: 'mauriciocap'}); //A: el parametro fue eliminar ese filtro
+
 });
