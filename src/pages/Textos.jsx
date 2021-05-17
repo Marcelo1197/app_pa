@@ -13,7 +13,7 @@ import MarkdownMostrar from '../components/MarkdownMostrar';
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
 
-export default function Texto() {
+export default function Textos() {
 	const history= useHistory();
 	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
 	const [textos, filtros, setFiltros]= usePaApiConsulta();
@@ -25,7 +25,7 @@ export default function Texto() {
 			deQuien_Username: urlSearchParams['de'],
 		});
 		console.log('Texto filtros', filtros);
-	}, [urlSearchParams]); //A: repetir la consulta si cambia filtros
+	}, [urlSearchParams]); //A: repetir la consulta si cambia VALORES de query params 
 
 	const fh_max_proxima= new Date(textos.reduce((acc, t) => Math.max(acc, t.fhCreado), 0));
 	const fh_min= new Date(textos.reduce((acc, t) => Math.min(acc, t.fhCreado), new Date()));
@@ -58,6 +58,7 @@ export default function Texto() {
 									to={{ search: '?'+urlParamsParaDiccionario({ ...urlSearchParams, de:texto.deQuien}), state: texto}}
 								>{texto.deQuien}
 								</Link>
+
 								<MarkdownMostrar 
 									contexto={texto}
 									style={{maxHeight: '10em', maxWidth: '80vw', overflow: 'hidden'}}
@@ -71,6 +72,7 @@ export default function Texto() {
 						<Button 
 							to={{search: '?'+urlParamsParaDiccionario({ ...urlSearchParams, fh_max:fh_min})}}
 							component={Link}
+							variant="contained"
 						>Más viejos</Button>	
 					</>)
 				: "Cargando ..."
