@@ -97,16 +97,18 @@ var USUARIO_RE= /(^|\s)@([A-Za-z0-9_\.-]+)/g;
 export function markdownTransformarHTML(src, el_id) { //U: convierte "nuestro" markdown en html, pura y facil de debuggear
 	//TODO: No reemplazar hash en urls
 	var t= {src: src}
-	t.txt_con_tags = t.src.replace(HASHTAG_RE, 
+	t.txt_con_video = t.src.replace(/https:\/\/www.youtube.com\/watch\S+/g, youtubeUrlAEmbed);
+	t.txt_con_diagramas = t.txt_con_video.replace(PLANTUML_REGEX, plantumlImgHtmlPara);
+
+	t.txt_con_tags = t.txt_con_diagramas.replace(HASHTAG_RE, 
 		(m,m1,m2) => (m1+hashtagAMarkdownLink('#'+m2, '#'+el_id))); 
 	//A: busco y reemplazo hashtags con links markdown
 	t.txt_con_usuarios = t.txt_con_tags.replace( USUARIO_RE,
 		(m,m1,m2) => (m1+usuarioAMarkdownLink('@'+m2))); 
 	//A: busco y reemplazo usuarios con links markdown
-	t.txt_con_video = t.txt_con_usuarios.replace(/https:\/\/www.youtube.com\/watch\S+/g, youtubeUrlAEmbed);
-	t.txt_con_diagramas = t.txt_con_video.replace(PLANTUML_REGEX, plantumlImgHtmlPara);
-	t.markdown_generado = t.txt_con_diagramas
+	t.markdown_generado = t.txt_con_usuarios;
 	t.markedHtml= marked(t.markdown_generado); //A: convierto markdown a html
+	console.log(t);
 	return t;
 }
 
