@@ -25,10 +25,12 @@ export default function TextoFiltros({filtros, setFiltros}) {
 
 				return (
 					<Button
-						variant="contained"
+						key={k}
 						startIcon={icon}
-						endIcon={<DeleteIcon />}
 						onClick={() => cuandoPideBorrar(k)}
+
+						endIcon={<DeleteIcon />}
+						variant="contained"
 					>{txt}</Button>
 				)
 			})}
