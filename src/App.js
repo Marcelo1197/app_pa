@@ -29,6 +29,7 @@ const MenuYRutas = [
     path: '/',
     dsc: 'Inicio',
     pagina: Inicio,
+		noNecesitaLogin: true,
   },
 	{
     path: '/como-voy',

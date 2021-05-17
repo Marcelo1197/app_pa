@@ -108,7 +108,8 @@ export function markdownTransformarHTML(src, el_id) { //U: convierte "nuestro" m
 	//A: busco y reemplazo usuarios con links markdown
 	t.markdown_generado = t.txt_con_usuarios;
 	t.markedHtml= marked(t.markdown_generado); //A: convierto markdown a html
-	console.log(t);
+	//DBG: console.log('markdownTransformarHTML', t);
+	//TODO:SEC sanitizar, que no nos injecten javascript que se robe el token por ej
 	return t;
 }
 
