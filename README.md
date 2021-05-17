@@ -33,3 +33,17 @@ texto(id: "VGV4dG9Ob2RlOjQyNQ==") { texto }
 }
 ~~~
 
+## Tests unitarios
+
+Para testear la aplicación preferimos usar tests end-to-end, que testean desde la pantalla hasta el servidor.
+
+Estos los usamos para desarrollar más rápido testeando funciones y librerías sin tener que pasar por la pantalla.
+
+Se ejecutan con 
+~~~
+npm run test
+~~~
+
+Están en la carpeta src/test
+
+Podés extraer algunas recetas de [el sitio de React](https://reactjs.org/docs/testing-recipes.html)
