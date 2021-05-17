@@ -113,7 +113,7 @@ export function markdownTransformarHTML(src, el_id) { //U: convierte "nuestro" m
 //S: fechas **************************************************
 export function fechaLegible(unaFechaTalVezEnTexto, fechaReferenciaTalVezEnTexto) {
 	const unaFecha= fechaParaTexto(unaFechaTalVezEnTexto);
-	const fechaReferencia= fechaParaTexto(fechaReferenciaTalVezEnTexto);
+	const fechaReferencia= fechaParaTexto(fechaReferenciaTalVezEnTexto, new Date());
 	const unaFecha_enSegundos= unaFecha.getTime()/1000;
 	const fechaReferencia_enSegundos= fechaReferencia.getTime()/1000;
 	let diffEnSegundos = unaFecha_enSegundos - fechaReferencia_enSegundos;

@@ -10,5 +10,7 @@ test('fechaLegible', () => { //A: escribis test con descripciones claras de que 
 	expect( fechaLegible('2021-04-25T03:16:11.168Z', ref) ).toBe('hace 22.2días');
 	expect( fechaLegible('2021-01-22T03:16:11.168Z', ref) ).toBe('hace 16.5semanas');
 	expect( fechaLegible('2020-01-22T03:16:11.168Z', ref) ).toBe('1/22/2020, 12:16:11 AM');
+
+	expect( fechaLegible(new Date()) ).toBe('ahora'); //A: sin referencia
 	//A: en este caso agrupe varios expect ... toBe pq es una funcion simple, sino separo en tests distintos
 });
