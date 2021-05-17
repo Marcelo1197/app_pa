@@ -1,18 +1,23 @@
-import Link from "@material-ui/core/Link";
-import {Link as RouterLink} from "react-router-dom";
+import MarkdownMostrar from '../components/MarkdownMostrar';
 
 export default function Inicio() {
 	return (
-		<>
-			<h2>Home</h2>
-			Podes ir a 
-			<Link component={RouterLink} to="/que-hago">
-				¿Qué hago?
-			</Link>
-			Podes ir a 
-			<Link component={RouterLink} to="/charla/bandadjango">
-				#bandadjango
-			</Link>
-		</>
+		<MarkdownMostrar contexto={{}}>
+		{`
+## ¡Que bueno que estés acá!
+
+Creamos esta app para ayudarte a que
+
+* cuando tengas un ratito libre
+* te enfoque en avanzar algo que te importa
+
+Todavía la estamos inventando. ¿Te gustaría ayudarnos y aparecer en los créditos? Puede ser
+
+* Escribiendo código con la #bandaReActiva , #bandadjango , #bandatesting
+* Dibujando pantallas, haciendo experimientos, investigando otras apps con la #bandaUX_UI
+* Simplemente contando qué te gustaría y como te fue
+
+		`}
+		</MarkdownMostrar>
 	)
 } 
