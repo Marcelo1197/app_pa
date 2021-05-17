@@ -9,6 +9,7 @@ import './index.css';
 import AppMenuYMarco from './components/AppMenuYMarco';
 import Login from './pages/Login/Login';
 
+
 import Inicio from './pages/Inicio';
 import Textos from './pages/Textos';
 
@@ -17,6 +18,7 @@ import PaginaTexto from './pages/Texto';
 import Charla from './pages/Charla';
 
 import PaginaModoDesarrollo from './pages/ModoDesarrollo';
+import PaginaNoImplementada from './pages/NoImplementada';
 
 const MenuYRutas = [
 	{
@@ -25,6 +27,7 @@ const MenuYRutas = [
 		noNecesitaLogin: true,
 		//A: sin descripcion no se muestra en el menu
 	},
+	
   {
     path: '/',
     dsc: 'Inicio',
@@ -34,7 +37,6 @@ const MenuYRutas = [
 	{
     path: '/como-voy',
     dsc: '¿Cómo voy?',
-    pagina: () => <h2>Bubblegum</h2>,
   },
   {
     path: '/que-hago',
@@ -75,6 +77,12 @@ const MenuYRutas = [
 			contexto.logout(); 
 		}
 	},
+
+	{
+		path: '*',
+		pagina: PaginaNoImplementada,
+		noNecesitaLogin: true,
+	}
 ];
 
 export default function App() {
