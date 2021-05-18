@@ -8,7 +8,7 @@ import {useHistory} from "react-router-dom";
 function urlDjangoAEstaApp(url,contexto) { //U: las del sitio html puro son distintas, las transformamos
 	let dst= null;
 	let params= {};
-	params.fh_max= contexto.fh_max || contexto.fhCreado;
+	params.fh_max= contexto.fh_max || new Date(new Date(contexto.fhCreado).getTime()+1);
 
 	let m = url.match('^/charla/([^#]+)')
 	if (m) { 

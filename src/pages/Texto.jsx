@@ -27,8 +27,7 @@ export default function PaginaTexto(props) {
 					Textos	
 				</Link>
 				<>
-				De { datos.deQuien }
-				{ fechaLegible(datos.fhCreado) }
+				De { datos.deQuien } { fechaLegible(datos.fhCreado) }
 				</>
 			</Breadcrumbs>
 				

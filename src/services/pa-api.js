@@ -135,7 +135,7 @@ export async function fetchConToken(data, opciones, url, noQuiereJson) { //U: ha
     throw new Error(ErrorMsgNecesitaLogin);
   }
 
-	url= url || '/graphql'; //DFLT 
+	url= url || '/graphql/'; //DFLT 
 	if (! url.startsWith('http') ) {
 		url= CFG.api_url+url;
 	}

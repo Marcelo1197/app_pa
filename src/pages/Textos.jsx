@@ -8,10 +8,11 @@ import { fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-l
 import { usePaApiConsulta } from '../hooks/usePaApiConsulta';
 
 import TextoFiltros from '../components/TextoFiltros';
-import MarkdownMostrar from '../components/MarkdownMostrar';
+import TextoCard from '../components/TextoCard';
 
 import {Link} from "react-router-dom";
 import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
 
 export default function Textos() {
 	const history= useHistory();
@@ -27,7 +28,7 @@ export default function Textos() {
 		console.log('Texto filtros', filtros);
 	}, [urlSearchParams]); //A: repetir la consulta si cambia VALORES de query params 
 
-	const fh_max_proxima= new Date(textos.reduce((acc, t) => Math.max(acc, t.fhCreado), 0));
+	const fh_max_proxima= new Date(new Date(textos.reduce((acc, t) => Math.max(acc, t.fhCreado), 0)));
 	const fh_min= new Date(textos.reduce((acc, t) => Math.min(acc, t.fhCreado), new Date()));
 	//DBG: console.log("Textos fh_min fh_max",fh_min, fh_max_proxima)
 
@@ -48,32 +49,20 @@ export default function Textos() {
 
 			{ textos 
 				? (<> 
-						<>
-						{ textos.map( (texto, index) => (
-							<div style={{margin: '10px'}} key={index}>
-								<Link 
-									to={{pathname: `/texto/${texto.textoId}`, state: texto}}
-								>{fechaLegible( texto.fhCreado )}
-								</Link> por <Link
-									to={{ search: '?'+urlParamsParaDiccionario({ ...urlSearchParams, de:texto.deQuien}), state: texto}}
-								>{texto.deQuien}
-								</Link>
-
-								<MarkdownMostrar 
-									contexto={texto}
-									style={{maxHeight: '10em', maxWidth: '80vw', overflow: 'hidden'}}
-								>
-									{texto.texto.substr(0,300)}
-								</MarkdownMostrar>
-							</div>
+						<Container>
+						{ 
+							textos.map( (texto, index) => (
+								<TextoCard key={index} texto={texto} urlSearchParams={urlSearchParams}/>
 							))
 						}
-						</>
+						</Container>
+
 						<Button 
 							to={{search: '?'+urlParamsParaDiccionario({ ...urlSearchParams, fh_max:fh_min})}}
 							component={Link}
 							variant="contained"
 						>Más viejos</Button>	
+
 					</>)
 				: "Cargando ..."
 			}
