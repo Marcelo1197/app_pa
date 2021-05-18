@@ -206,8 +206,13 @@ export default function AppMenuLateral(props) {
 				.map((ruta, index) => (
 					ruta.divisor 
 					? <Divider />
+					: ruta.seccion
+					? (<>
+							<Divider />
+							<div style={{backgroundColor: 'darkgray', color: 'white'}}>{ruta.seccion}</div>
+						</>)
 					: ruta.dsc
-					? ( <ListItemLink accion={ruta.accion} to={ruta.path} icon={ruta.icono} primary={ruta.dsc} cerrarMenu={handleDrawerClose} /> )
+					? ( <ListItemLink accion={ruta.accion} to={ruta.linkTo || ruta.path} icon={ruta.icono} primary={ruta.dsc} cerrarMenu={handleDrawerClose} /> )
 					: null
 				))
 				.filter( e => e!=null) //A: solo si no son null

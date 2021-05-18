@@ -32,6 +32,9 @@ export default function Textos() {
 	const fh_min= new Date(textos.reduce((acc, t) => Math.min(acc, t.fhCreado), new Date()));
 	//DBG: console.log("Textos fh_min fh_max",fh_min, fh_max_proxima)
 
+	const textosOrdenados= textos.sort( (a,b) => (a.fhCreado > b.fhCreado ? -1 : 1) );	
+	//TODO: ordenar mas nuevo arriba como ahora, o mas nuevo abajo?
+
 	const cuandoCambiaFiltros= (filtros) => {
 		history.push('/textos/?'+urlParamsParaDiccionario(filtros)); //A: navegamos a nueva url
 	};
@@ -51,7 +54,7 @@ export default function Textos() {
 				? (<> 
 						<Container>
 						{ 
-							textos.map( (texto, index) => (
+							textosOrdenados.map( (texto, index) => (
 								<TextoCard key={index} texto={texto} urlSearchParams={urlSearchParams}/>
 							))
 						}

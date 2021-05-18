@@ -38,12 +38,18 @@ const MenuYRutas = [
     path: '/como-voy',
     dsc: '¿Cómo voy?',
   },
-  {
-    path: '/que-hago',
-    dsc: '¿Qué hago?',
-    pagina: QueHago.PaginaQueHago,
-    icono: <QueHago.IconoQueHago />,
-  },
+ 	{
+		dsc: '¿Me hablan a mi?',
+		accion: ({history, usuario}) => {
+			history.push({ pathname: '/textos', search: `?charla=@${usuario}` });
+		},
+	},
+	{
+		dsc: 'Mi plan',
+		accion: ({history, usuario}) => {
+			history.push({ pathname: '/textos', search: `?charla=${encodeURIComponent('#plan_de_participante_'+usuario)}` });
+		},
+	},
   {
     path: '/texto/:textoid',
 		esPrefijo: true,
@@ -62,14 +68,6 @@ const MenuYRutas = [
   },
 
 	{ divisor: true },
-	{
-    path: '/devel/',
-		dsc: 'Modo  Desarrollo',
-    pagina: PaginaModoDesarrollo,
-		noNecesitaLogin: true,
-  },
-
-	{ divisor: true },
   {
     dsc: 'Logout',
 		accion: (contexto) => { 
@@ -77,6 +75,22 @@ const MenuYRutas = [
 			contexto.logout(); 
 		}
 	},
+
+	{ seccion: 'Modo desarrollo' },
+	{
+    path: '/devel/',
+		dsc: 'Servidor',
+    pagina: PaginaModoDesarrollo,
+		noNecesitaLogin: true,
+  },
+
+	{
+    path: '/ideas/que-hago',
+    dsc: '(idea) ¿Qué hago?',
+    pagina: QueHago.PaginaQueHago,
+    icono: <QueHago.IconoQueHago />,
+  },
+
 
 	{
 		path: '*',

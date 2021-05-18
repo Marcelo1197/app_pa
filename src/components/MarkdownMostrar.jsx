@@ -1,14 +1,19 @@
 //INFO: mostrar markdown en un div
 
 import { Children, useState, useEffect, createRef } from 'react';
-import { markdownTransformarHTML, urlParamsParaDiccionario } from '../services/pa-lib';
+import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from "react-router-dom";
+
+import { markdownTransformarHTML, urlParamsParaDiccionario } from '../services/pa-lib';
 
 //TODO: mover a otro lado, independizar de Markdown
 function urlDjangoAEstaApp(url,contexto) { //U: las del sitio html puro son distintas, las transformamos
 	let dst= null;
 	let params= {};
-	params.fh_max= contexto.fh_max || new Date(new Date(contexto.fhCreado).getTime()+1);
+	params.fh_max= contexto.fh_max;
+	if (params.fh_max && contexto.fhCreado) {
+		params.fh_max= new Date(new Date(contexto.fhCreado).getTime()+1);
+	}
 
 	let m = url.match('^/charla/([^#]+)')
 	if (m) { 
@@ -29,10 +34,28 @@ function linkDjangoAEstaApp(link_el, contexto, history) {
 	}
 }
 
+const useStyles = makeStyles({
+	root: {
+		'& img': {
+			maxWidth: '80%'
+		},
+		'& code': {
+			maxWidth: '100%',
+			overflow: 'scroll',
+		},
+		'& pre': {
+			maxWidth: '100%',
+			overflow: 'scroll',
+		}
+	},
+});
+
+
 export default function MarkdownMostrar(props) {
 	//VER: (marked) https://reactjs.org/docs/dom-elements.html
 	const history= useHistory();
 	const dom_element= createRef();
+	const classes= useStyles();
 
 	useEffect( () => {
 		if (dom_element.current) { //A: tengo un elemento en el dom
@@ -44,7 +67,7 @@ export default function MarkdownMostrar(props) {
 
 	return (
 		Children.map(props.children, md =>
-		<div ref={dom_element} {...props}>
+		<div className={classes.root} ref={dom_element} {...props}>
 			<div  dangerouslySetInnerHTML={{__html: 
 				markdownTransformarHTML( md ).markedHtml
 			}} />

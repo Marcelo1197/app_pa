@@ -8,6 +8,7 @@ import MarkdownMostrar from '../components/MarkdownMostrar';
 
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
+import Container from '@material-ui/core/Container';
 
 
 export default function PaginaTexto(props) {
@@ -31,9 +32,11 @@ export default function PaginaTexto(props) {
 				</>
 			</Breadcrumbs>
 				
-			<MarkdownMostrar contexto={datos}>
-				{datos.texto}
-			</MarkdownMostrar>
+			<Container>
+				<MarkdownMostrar contexto={datos}>
+					{datos.texto}
+				</MarkdownMostrar>
+			</Container>
 		</>
 	)
 }
