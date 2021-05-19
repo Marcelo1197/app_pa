@@ -2848,8 +2848,19 @@ s0.forEach(t => {
 
 //DBG: console.log(JSON.stringify(MiSchema,null,2))
 
-//Quiero conseguir 
-qm= ['textoLista', 'texto', ['deQuien','username'], ['charlaitemSet', ['charla', 'titulo',['deQuien','username']], 'orden']]
+//U: QUERIES: Quiero conseguir 
+qm= [ 
+	'textoLista', 
+		'texto', 
+		['deQuien','username'], 
+		['charlaitemSet', 
+			['charla', 
+				'titulo',
+				['deQuien','username']
+			], 
+			'orden'
+		]
+	]
 
 
 
@@ -2868,23 +2879,43 @@ function recorrerTipos(t0,buscando, acc0) {
 
 function recorrerQuery(t0,partes) {
 	let t= MiSchema.tipos[t0];
+	let r= ' ';
 	let closing= '';
-	if (t.fields.edges) { console.log(' edges {'); closing+='}'; t= MiSchema.tipos[t.fields.edges.t]; }
-	if (t.fields.node) { console.log(' node {'); closing+='}'; t= MiSchema.tipos[t.fields.node.t]; }
+	if (t.fields.edges) { r+='edges {'; closing+='} '; t= MiSchema.tipos[t.fields.edges.t]; }
+	if (t.fields.node) { r+='node {'; closing+='} '; t= MiSchema.tipos[t.fields.node.t]; }
 	partes.forEach(p => {
 		if (Array.isArray(p)) {
-			console.log(p[0]+' {');
-			recorrerQuery(t.fields[p[0]].t,p.slice(1));
-			console.log(' }');
+			r+=(p[0]+' { ');
+			r+=recorrerQuery(t.fields[p[0]].t,p.slice(1));
+			r+=(' } ');
 		}
 		else {
 			//DBG: console.log('PARTE',p,xt);
-			console.log(p);
+			r+= p+' ';
 		}
 	});
-	console.log(closing);
+	r+=closing;
+	return r;
 }
 q= MiSchema.consultas[qm[0]];
-console.log('{' +qm[0] +' { ');
-t0= recorrerQuery(q.t,qm.slice(1)) 
-console.log('}}');
+qs= '{' +qm[0] +' { ' + recorrerQuery(q.t,qm.slice(1)) + '}}';
+console.log(qs);
+
+//U: parametros/variables
+mId='textoModificar'; mValores= {
+	texto: `Parar #borrame_test_automatico ${new Date().toISOString()}`, 
+	charlaTitulo: '#borrame_charla_1',
+	orden: (new Date()+'').substr(15,10),
+}
+
+m= MiSchema.modificaciones[mId];
+tipo_params= MiSchema.tipos[m.params.input.t].params;
+console.log('Modificacion',tipo_params);
+param_s= Object.entries(mValores).map( ([k,v]) => {
+	let t= tipo_params[k];
+	//DBG: console.log(k,t);
+	return `${k}: ${JSON.stringify(v+'')}`	
+}).join(' ');
+
+ms= `mutation m_1 { ${mId}(input: { ${param_s} }) { texto { id texto } }}`
+console.log('MS',ms);
