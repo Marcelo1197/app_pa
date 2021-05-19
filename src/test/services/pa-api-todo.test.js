@@ -36,7 +36,7 @@ async function textoCrear(textoEnviado, charlaTitulo, orden) {
 async function todoTareas(charlaModelo) {
 	const qs= (await apiGQL()).consulta(
 		['textoLista', 'id','texto','fhCreado',['deQuien','username'],['charlaitemSet','orden']], 
-		{enCharla: charlaModelo}
+		{'*charla_Titulo': charlaModelo}
 	);
 	const todo_list_res= await PaApi.fetchConToken({query: qs});
 
