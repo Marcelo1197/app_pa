@@ -3,6 +3,7 @@
 import GraphqlGeneradorPara from '../../services/pa-api-graphql';
 
 
+
 it('Genera consultas y modificaciones', () => {
 	//TODO: convertir en un test verdadero
 
@@ -25,6 +26,7 @@ it('Genera consultas y modificaciones', () => {
 
 	console.log( apiGQL.consulta(qm) );
 	console.log( apiGQL.consulta(qm, {fhCreado_Gt: new Date(), orderBy: ['fhCreado']}) );
+	console.log( apiGQL.consulta(qm, {fhCreado_Gt: new Date(), orderBy: ['fhCreado'], '*charla_Titulo': '#estaCharla'}) );
 
 	console.log( apiGQL.modificacion(
 		'textoModificar', 

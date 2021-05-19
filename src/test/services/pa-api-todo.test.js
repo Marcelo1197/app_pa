@@ -1,73 +1,50 @@
 //INFO: leer y actualizar una todo list con la API de PodemosAprender
 
 import PaApi, {desarrolloSolamenteUrl} from '../../services/pa-api.js';
+import GraphqlGeneradorPara, {GraphQlSchemaQuery} from '../../services/pa-api-graphql';
 
 const logm= (msg, data) => {
 	console.log(msg, JSON.stringify(data, null,1));
 }
 
-const GraphQlSchemaQuery='query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name } } } } } } } }'; //U: la misma que usa graphiQl de Django 
-
-const GraphQlCmd= {
-	textoModificar: `
-	{ clientMutationId texto { id texto } } 
-`,
-	textoListaEnCharla: `
-	{ edges { node { 
-		id deQuien { username } fhEditado texto 
-		charlaitemSet(charla_Titulo: $enCharla) {
-      edges { node { orden }}
-    }
-	}}}
-`	
-}
-
-function apiCmdTxt(cmdId, variables, alias) {
-	const cmd0= GraphQlCmd[cmdId];
-	if (!cmd0) { throw new Error(`apiCmd desconocido ${cmdId}`); }
-
-	const aliasOk= alias || cmdId;
-	const variablesOk= variables || {};
-	const paramStr= Object.keys(variablesOk).map( k=> (k+': $'+k) ).join(' ');
-
-	if (cmdId.match(/Modificar|Crear|Borrar/)) { //A: es mutacion
-		return `mutation ${alias}(${paramStr}) {
-			${cmdId}(input: { ${paramStr} })
-			${cmd0}
-		`;
-	}
-	else {
-		return "TODO";
-	}
-}
-
-async function apiCmd(cmdId, variables) {
+let Generador_= null; //U: cache si ya me traje el esquema
+async function apiGQL() {
+	if (Generador_) { return Generador_ };
 	const res= await PaApi.fetchConToken({
-		query: QTextoModificar, 
-		variables: {texto: textoEnviado, charla_titulo, orden},
+		query: GraphQlSchemaQuery,
+		operationName: 'IntrospectionQuery',
 	});	
+	//TODO: control de errores
+	Generador_= GraphqlGeneradorPara(res);	
+	console.log(JSON.stringify(Generador_.schema,null,2));
+	return Generador_;
 }
 
-async function textoCrear(textoEnviado, charla_titulo, orden) {
-	const res= await PaApi.fetchConToken({
-		query: QTextoModificar, 
-		variables: {texto: textoEnviado, charla_titulo, orden},
-	});	
-	//DBG: console.log(JSON.stringify(res,null,1));
+async function textoCrear(textoEnviado, charlaTitulo, orden) {
+	const qs= (await apiGQL()).modificacion(
+		'textoModificar', 
+		{texto: textoEnviado, charlaTitulo, orden}, 
+		['texto','id','texto']
+	);
+	const res= await PaApi.fetchConToken({ query: qs });	
+	//DBG: 
+	console.log(JSON.stringify(res,null,1));
 	expect(res.data.textoModificar.texto.texto).toMatch(textoEnviado);
 	return res;
 }
 
 async function todoTareas(charlaModelo) {
-	const todo_list_res= await PaApi.fetchConToken({
-		query: QTextoListaDeCharla,
-		variables: {enCharla: charlaModelo},
-	});	
+	const qs= (await apiGQL()).consulta(
+		['textoLista', 'id','texto','fhCreado',['deQuien','username'],['charlaitemSet','orden']], 
+		{enCharla: charlaModelo}
+	);
+	const todo_list_res= await PaApi.fetchConToken({query: qs});
 
 	//console.log('TodoLista\n'+ JSON.stringify(todo_list_res,null,1));
 	const Tareas= {};
 	for (let tareaNum= 0; tareaNum<todo_list_res.data.textoLista.edges.length; tareaNum++) {
 		let item= todo_list_res.data.textoLista.edges[tareaNum].node;
+		logm('ITEM',item);
 		let orden= item.charlaitemSet.edges[0].node.orden;
 		if (! orden.startsWith('_')) {
 			Tareas[orden]= {consigna: item.texto};
@@ -91,14 +68,10 @@ async function todoRegistrarEvidencia(charlaModelo, username, tareaId) {
 	await textoCrear(`EVIDENCIA de la tarea ${tareaId} de ${charlaModelo}`, charlaRegistro, tareaId);
 }
 
-fit('apiGetSchema', async () => { 
+it('apiGetSchema', async () => { 
 	desarrolloSolamenteUrl('http://localhost:8000');
 	const login_res= await PaApi.apiLogin('admin','secreto');
-	const res= await PaApi.fetchConToken({
-		query: GraphQlSchemaQuery,
-		operationName: 'IntrospectionQuery',
-	});	
-	logm('apiGetSchema',res);
+	await apiGQL();	
 })
 	
 it('crearLeerYActualizarTodo', async () => { 
