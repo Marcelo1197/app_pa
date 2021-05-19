@@ -99,7 +99,15 @@ function generarQueryPartes(t0, partes, schema) {
 
 export function generarQuery(qm, filtros, schema) {
 	const q= schema.consultas[qm[0]] || schema.tipos[qm[0]];
-	const qs= '{' +qm[0] +' { ' + generarQueryPartes(q.t, qm.slice(1), schema) + '}}';
+	//DBG: console.log('generarQuery',qm,q);
+	const param_s= generarParams(qm[0], filtros || {}, schema)
+	const qs= (
+		'{' +
+			qm[0]+ 
+			(param_s ? '('+param_s+')':'') 
+			+' { ' + 
+				generarQueryPartes(q.t, qm.slice(1), schema) + 
+		'}}');
 	//DBG: console.log('generarQuery',qs, qm);
 	return qs;
 }
@@ -114,18 +122,30 @@ export function generarMutationDfltQuery(modificacionId, schema) {
 	return ' { ' +qs+' } ';
 }
 
-export function generarMutation(modificacionId, modificacionValores, query, schema) {
-	const m= schema.modificaciones[modificacionId];
-	const tipo_params= schema.tipos[m.params.input.t].params;
-	//DBG: console.log('Modificacion',modificacionId, m.t, tipo_params);
-	const param_s= Object.entries(modificacionValores).map( ([k,v]) => {
+function generarParams(t,valores,schema) {
+	const def= schema.consultas[t] || schema.tipos[t];
+	const tipo_params= def.params;
+	//DBG: console.log('generarParams',t, tipo_params);
+	const param_s= Object.entries(valores).map( ([k,v]) => {
+		if (v==null) { return '' }
+
 		let t= tipo_params[k];
 		//DBG: console.log(k,t);
-		//TODO: DateTime, otros tipos?
-		return `${k}: ${JSON.stringify(v+'')}`	
+		//TODO: otros tipos?
+		const vs= 
+			t.t=='DateTime'
+			? JSON.stringify(new Date(v).toISOString())
+			: JSON.stringify(v+'');
+
+		return `${k}: ${vs}`	
 	}).join(' ');
-	//TODO: query
+	return param_s;
+}
+
+export function generarMutation(modificacionId, modificacionValores, query, schema) {
+	const m= schema.modificaciones[modificacionId];
 	const qs= query ? generarQuery(query, null, schema) : generarMutationDfltQuery(modificacionId, schema);
+	const param_s= generarParams(m.params.input.t, modificacionValores, schema)
 	const ms= `mutation m_1 { ${modificacionId}(input: { ${param_s} }) ${ qs } }`
 	//console.log('generarMutation',ms, modificacionId, modificacionValores);
 	return ms;
