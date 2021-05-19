@@ -122,20 +122,28 @@ export function generarMutationDfltQuery(modificacionId, schema) {
 	return ' { ' +qs+' } ';
 }
 
+function generarUnParam(t,v) { //U: solo para escalares, no listas
+	//TODO: otros tipos?
+	const vs= 
+		t.t=='DateTime'
+		? JSON.stringify(new Date(v).toISOString())
+		: t.t=='String'
+		? JSON.stringify(v+'')
+		: JSON.stringify(v);
+	return vs;
+}
+
 function generarParams(t,valores,schema) {
 	const def= schema.consultas[t] || schema.tipos[t];
 	const tipo_params= def.params;
 	//DBG: console.log('generarParams',t, tipo_params);
 	const param_s= Object.entries(valores).map( ([k,v]) => {
 		if (v==null) { return '' }
-
 		let t= tipo_params[k];
 		//DBG: console.log(k,t);
-		//TODO: otros tipos?
-		const vs= 
-			t.t=='DateTime'
-			? JSON.stringify(new Date(v).toISOString())
-			: JSON.stringify(v+'');
+		const vs= t.k=='LIST'
+			? '['+ v.map( v1 => generarUnParam(t,v1)).join(', ')+']'
+			: generarUnParam(t,v);
 
 		return `${k}: ${vs}`	
 	}).join(' ');

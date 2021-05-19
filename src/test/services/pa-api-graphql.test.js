@@ -24,7 +24,7 @@ it('Genera consultas y modificaciones', () => {
 	]
 
 	console.log( apiGQL.consulta(qm) );
-	console.log( apiGQL.consulta(qm, {fhCreado_Gt: new Date()}) );
+	console.log( apiGQL.consulta(qm, {fhCreado_Gt: new Date(), orderBy: ['fhCreado']}) );
 
 	console.log( apiGQL.modificacion(
 		'textoModificar', 
