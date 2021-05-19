@@ -97,7 +97,7 @@ function generarQueryPartes(t0, partes, schema) {
 	return r;
 }
 
-export function generarQuery(qm, schema) {
+export function generarQuery(qm, filtros, schema) {
 	const q= schema.consultas[qm[0]] || schema.tipos[qm[0]];
 	const qs= '{' +qm[0] +' { ' + generarQueryPartes(q.t, qm.slice(1), schema) + '}}';
 	//DBG: console.log('generarQuery',qs, qm);
@@ -125,7 +125,7 @@ export function generarMutation(modificacionId, modificacionValores, query, sche
 		return `${k}: ${JSON.stringify(v+'')}`	
 	}).join(' ');
 	//TODO: query
-	const qs= query ? generarQuery(query, schema) : generarMutationDfltQuery(modificacionId, schema);
+	const qs= query ? generarQuery(query, null, schema) : generarMutationDfltQuery(modificacionId, schema);
 	const ms= `mutation m_1 { ${modificacionId}(input: { ${param_s} }) ${ qs } }`
 	//console.log('generarMutation',ms, modificacionId, modificacionValores);
 	return ms;
@@ -149,7 +149,7 @@ qm= [
 		]
 	]
 
-console.log( generarQuery(qm, MiSchema) );
+console.log( generarQuery(qm, null, MiSchema) );
 
 console.log( generarMutationDfltQuery('textoModificar', MiSchema));
 
@@ -177,3 +177,11 @@ console.log( generarMutation(
 
 */
 
+export default function GraphqlGeneradorPara(schemaDeGrapheneDjango) {
+	const schema= schemaSimplificadoPara(schemaDeGrapheneDjango);
+	return {
+		schema,
+		consulta: function consulta(qm, filtros) { return generarQuery(qm, filtros, schema); },
+		modificacion: function modificacion(modificacionId, modificacionValores, query) { return generarMutation(modificacionId, modificacionValores, query, schema); },
+	};
+}

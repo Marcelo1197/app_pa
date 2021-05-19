@@ -1,11 +1,13 @@
 //INFO: generar consultas a partir del esquema que devuelve graphene
 
-import {schemaSimplificadoPara, generarQuery, generarMutation } from '../../services/pa-api-graphql';
+import GraphqlGeneradorPara from '../../services/pa-api-graphql';
+
 
 it('Genera consultas y modificaciones', () => {
 	//TODO: convertir en un test verdadero
 
-	const MiSchema= schemaSimplificadoPara(require('../../ej/graphql_schema_de_django.json'));
+	const apiGQL= GraphqlGeneradorPara(require('../../ej/graphql_schema_de_django.json'));
+
 	//DBG: console.log(JSON.stringify(MiSchema,null,2))
 	//U: QUERIES: Quiero conseguir 
 	const qm= [ 
@@ -21,28 +23,26 @@ it('Genera consultas y modificaciones', () => {
 		]
 	]
 
-	console.log( generarQuery(qm, MiSchema) );
+	console.log( apiGQL.consulta(qm) );
 
-	console.log( generarMutation(
+	console.log( apiGQL.modificacion(
 		'textoModificar', 
 		{
 			texto: `Parar #borrame_test_automatico ${new Date().toISOString()}`, 
 			charlaTitulo: '#borrame_charla_1',
 			orden: (new Date()+'').substr(15,10),
 		},
-		null,
-		MiSchema
+		null
 	));
 
-	console.log( generarMutation(
+	console.log( apiGQL.modificacion(
 		'textoModificar', 
 		{
 			texto: `Parar #borrame_test_automatico ${new Date().toISOString()}`, 
 			charlaTitulo: '#borrame_charla_1',
 			orden: (new Date()+'').substr(15,10),
 		},
-		['texto','id',['deQuien','username']],
-		MiSchema
+		['texto','id',['deQuien','username']]
 	));
 
 });
