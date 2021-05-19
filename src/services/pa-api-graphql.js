@@ -12,7 +12,7 @@ function simplificarType(t) {
 	}
 }
 
-function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
+export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 	const schemaSimple= {tipos: {}, consultas: {}, modificaciones: {}};
 
 	const s0= unSchemaDeDjangoGrapheneRelay.data.__schema.types;
@@ -97,14 +97,14 @@ function generarQueryPartes(t0, partes, schema) {
 	return r;
 }
 
-function generarQuery(qm, schema) {
+export function generarQuery(qm, schema) {
 	const q= schema.consultas[qm[0]] || schema.tipos[qm[0]];
 	const qs= '{' +qm[0] +' { ' + generarQueryPartes(q.t, qm.slice(1), schema) + '}}';
 	//DBG: console.log('generarQuery',qs, qm);
 	return qs;
 }
 
-function generarMutationDfltQuery(modificacionId, schema) {
+export function generarMutationDfltQuery(modificacionId, schema) {
 	const m= schema.modificaciones[modificacionId];
 	const tm= schema.tipos[m.t];
 	const tr= Object.keys(tm.fields).filter(k => k!='clientMutationId')[0];
@@ -114,7 +114,7 @@ function generarMutationDfltQuery(modificacionId, schema) {
 	return ' { ' +qs+' } ';
 }
 
-function generarMutation(modificacionId, modificacionValores, query, schema) {
+export function generarMutation(modificacionId, modificacionValores, query, schema) {
 	const m= schema.modificaciones[modificacionId];
 	const tipo_params= schema.tipos[m.params.input.t].params;
 	//DBG: console.log('Modificacion',modificacionId, m.t, tipo_params);
@@ -131,6 +131,7 @@ function generarMutation(modificacionId, modificacionValores, query, schema) {
 	return ms;
 }
 
+/* U:
 
 MiSchema= schemaSimplificadoPara(require('./graphql_schema_de_django.json'));
 //DBG: console.log(JSON.stringify(MiSchema,null,2))
@@ -174,4 +175,5 @@ console.log( generarMutation(
 	MiSchema
 ));
 
+*/
 

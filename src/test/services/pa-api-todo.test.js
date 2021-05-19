@@ -6,23 +6,47 @@ const logm= (msg, data) => {
 	console.log(msg, JSON.stringify(data, null,1));
 }
 
-const QTextoModificar= `
-mutation TextoModificar($texto: String!, $charla_titulo: String!, $orden: String!) { 
-	textoModificar(input: {texto: $texto, orden: $orden, charlaTitulo: $charla_titulo} ) 
+const GraphQlSchemaQuery='query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name } } } } } } } }'; //U: la misma que usa graphiQl de Django 
+
+const GraphQlCmd= {
+	textoModificar: `
 	{ clientMutationId texto { id texto } } 
-}
-`
-const QTextoListaDeCharla= `
-query TextoLista($enCharla: String!) { 
-	textoLista(enCharla: $enCharla ) 
+`,
+	textoListaEnCharla: `
 	{ edges { node { 
 		id deQuien { username } fhEditado texto 
 		charlaitemSet(charla_Titulo: $enCharla) {
       edges { node { orden }}
     }
 	}}}
-}
 `	
+}
+
+function apiCmdTxt(cmdId, variables, alias) {
+	const cmd0= GraphQlCmd[cmdId];
+	if (!cmd0) { throw new Error(`apiCmd desconocido ${cmdId}`); }
+
+	const aliasOk= alias || cmdId;
+	const variablesOk= variables || {};
+	const paramStr= Object.keys(variablesOk).map( k=> (k+': $'+k) ).join(' ');
+
+	if (cmdId.match(/Modificar|Crear|Borrar/)) { //A: es mutacion
+		return `mutation ${alias}(${paramStr}) {
+			${cmdId}(input: { ${paramStr} })
+			${cmd0}
+		`;
+	}
+	else {
+		return "TODO";
+	}
+}
+
+async function apiCmd(cmdId, variables) {
+	const res= await PaApi.fetchConToken({
+		query: QTextoModificar, 
+		variables: {texto: textoEnviado, charla_titulo, orden},
+	});	
+}
 
 async function textoCrear(textoEnviado, charla_titulo, orden) {
 	const res= await PaApi.fetchConToken({
@@ -67,8 +91,17 @@ async function todoRegistrarEvidencia(charlaModelo, username, tareaId) {
 	await textoCrear(`EVIDENCIA de la tarea ${tareaId} de ${charlaModelo}`, charlaRegistro, tareaId);
 }
 
-
-fit('crearLeerYActualizarTodo', async () => { 
+fit('apiGetSchema', async () => { 
+	desarrolloSolamenteUrl('http://localhost:8000');
+	const login_res= await PaApi.apiLogin('admin','secreto');
+	const res= await PaApi.fetchConToken({
+		query: GraphQlSchemaQuery,
+		operationName: 'IntrospectionQuery',
+	});	
+	logm('apiGetSchema',res);
+})
+	
+it('crearLeerYActualizarTodo', async () => { 
 
 	desarrolloSolamenteUrl('http://localhost:8000');
 	const login_res= await PaApi.apiLogin('admin','secreto');
@@ -90,6 +123,5 @@ fit('crearLeerYActualizarTodo', async () => {
 	await todoRegistrarEvidencia(charlaModelo, 'pepita', Object.keys(tareasYestado0)[1]);
 	const tareasYestado1= await todoTareasYEstado(charlaModelo, 'pepita');
 	logm('tareasYestado DESPUES',tareasYestado1);
-
 });
 
