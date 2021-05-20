@@ -225,11 +225,14 @@ export function simplificarRespuesta(res,consultaId) { //U: siguiendo convencion
 		const d= d0.node || d0;	
 		const r= {};
 		Object.entries(d).map( ([k,v]) => {
+			if (k=='charlaitemSet') { console.log(typeof(v),k,v); }
 			r[k]= (
 				k.startsWith('fh') 
 				? fechaParaTexto(v) 
 				: k=='deQuien'
 				? v.username
+				: typeof(v)=='object'
+				? simplificarDatos(v)
 				: v
 			);
 		});

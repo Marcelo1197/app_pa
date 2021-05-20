@@ -12,7 +12,7 @@ async function textoCrear(textoEnviado, charlaTitulo, orden) {
 		{texto: textoEnviado, charlaTitulo, orden}, 
 		['texto','id','texto']
 	);
-	expect(res.data.textoModificar.texto.texto).toMatch(textoEnviado);
+	expect(res.texto.texto).toMatch(textoEnviado);
 	return res;
 }
 
@@ -23,10 +23,10 @@ async function todoTareas(charlaModelo) {
 	);
 	//console.log('TodoLista\n'+ JSON.stringify(todo_list_res,null,1));
 	const Tareas= {};
-	for (let tareaNum= 0; tareaNum<todo_list_res.data.textoLista.edges.length; tareaNum++) {
-		let item= todo_list_res.data.textoLista.edges[tareaNum].node;
+	for (let tareaNum= 0; tareaNum<todo_list_res.length; tareaNum++) {
+		let item= todo_list_res[tareaNum];
 		logm('ITEM',item);
-		let orden= item.charlaitemSet.edges[0].node.orden;
+		let orden= item.charlaitemSet[0].orden;
 		if (! orden.startsWith('_')) {
 			Tareas[orden]= {consigna: item.texto};
 		}
