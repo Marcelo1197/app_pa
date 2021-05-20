@@ -1,45 +1,26 @@
 //INFO: leer y actualizar una todo list con la API de PodemosAprender
 
-import PaApi, {desarrolloSolamenteUrl} from '../../services/pa-api.js';
-import GraphqlGeneradorPara, {GraphQlSchemaQuery} from '../../services/pa-api-graphql';
+import PaApi, {desarrolloSolamenteUrl, apiConsultar, apiModificar} from '../../services/pa-api.js';
 
 const logm= (msg, data) => {
 	console.log(msg, JSON.stringify(data, null,1));
 }
 
-let Generador_= null; //U: cache si ya me traje el esquema
-async function apiGQL() {
-	if (Generador_) { return Generador_ };
-	const res= await PaApi.fetchConToken({
-		query: GraphQlSchemaQuery,
-		operationName: 'IntrospectionQuery',
-	});	
-	//TODO: control de errores
-	Generador_= GraphqlGeneradorPara(res);	
-	console.log(JSON.stringify(Generador_.schema,null,2));
-	return Generador_;
-}
-
 async function textoCrear(textoEnviado, charlaTitulo, orden) {
-	const qs= (await apiGQL()).modificacion(
+	const res= await apiModificar(	
 		'textoModificar', 
 		{texto: textoEnviado, charlaTitulo, orden}, 
 		['texto','id','texto']
 	);
-	const res= await PaApi.fetchConToken({ query: qs });	
-	//DBG: 
-	console.log(JSON.stringify(res,null,1));
 	expect(res.data.textoModificar.texto.texto).toMatch(textoEnviado);
 	return res;
 }
 
 async function todoTareas(charlaModelo) {
-	const qs= (await apiGQL()).consulta(
+	const todo_list_res= await apiConsultar(
 		['textoLista', 'id','texto','fhCreado',['deQuien','username'],['charlaitemSet','orden']], 
 		{'*charla_Titulo': charlaModelo}
 	);
-	const todo_list_res= await PaApi.fetchConToken({query: qs});
-
 	//console.log('TodoLista\n'+ JSON.stringify(todo_list_res,null,1));
 	const Tareas= {};
 	for (let tareaNum= 0; tareaNum<todo_list_res.data.textoLista.edges.length; tareaNum++) {
@@ -68,14 +49,8 @@ async function todoRegistrarEvidencia(charlaModelo, username, tareaId) {
 	await textoCrear(`EVIDENCIA de la tarea ${tareaId} de ${charlaModelo}`, charlaRegistro, tareaId);
 }
 
-it('apiGetSchema', async () => { 
-	desarrolloSolamenteUrl('http://localhost:8000');
-	const login_res= await PaApi.apiLogin('admin','secreto');
-	await apiGQL();	
-})
-	
+jest.setTimeout(20000);
 it('crearLeerYActualizarTodo', async () => { 
-
 	desarrolloSolamenteUrl('http://localhost:8000');
 	const login_res= await PaApi.apiLogin('admin','secreto');
 	//DBG: console.log("login_res",login_res);

@@ -1,6 +1,8 @@
 //INFO: API REST CON TOKEN en si.podemosaprender.org
 // escribo funciones que se puedan probar por separado, despues las junto
 
+import GraphqlGeneradorPara, {GraphQlSchemaQuery} from './pa-api-graphql';
+
 const CFG = {
 	api_url: 'https://si.podemosaprender.org', //U: para usar otro servidor si queres
 }
@@ -182,6 +184,45 @@ export function esErrorNecesitaLogin(ex) {
 	return ex.message === ErrorMsgNecesitaLogin;
 }
 
+
+//S: API y graphql *******************************************
+let Generador_= null; //U: cache si ya me traje el esquema
+let GeneradorLeidoDe_= null; //U: de que servidor lo lei, para invalidarlo
+export async function apiGQL(quiereVolverALeer) {
+	if (!quiereVolverALeer && Generador_ && GeneradorLeidoDe_==CFG.api_url) { return Generador_ };
+	const res= await fetchConToken({
+		query: GraphQlSchemaQuery,
+		operationName: 'IntrospectionQuery',
+	});	
+	//TODO: control de errores
+	Generador_= GraphqlGeneradorPara(res);	
+	GeneradorLeidoDe_= CFG.api_url;
+	//DBG: console.log(JSON.stringify(Generador_.schema,null,2));
+	return Generador_;
+}
+
+//VER: test/services/pa-api-todo.test.js 
+export async function apiModificar(modificacionId, valores, query) { //U: genera y ejecuta mutation graphQl
+	const qs= (await apiGQL()).modificacion(
+		modificacionId,	
+		valores,	
+		query
+	);
+	const res= await fetchConToken({ query: qs });	
+	//DBG: console.log(JSON.stringify(res,null,1));
+	return res;
+}
+
+export async function apiConsultar(query, filtros) { //U: genera y ejecuta consula graphql
+	const qs= (await apiGQL()).consulta(
+		query,	
+		filtros	
+	);
+	const res= await fetchConToken({query: qs});
+	return res;
+}
+
+
 //S: solo para desarrollo, SEC: nunca en prod ################
 //SEC: si nos cambian la url via javascript en un texto, nos pueden hacer mandar user y pass a cualquier servidor
 export function desarrolloSolamenteInit() {
@@ -195,4 +236,4 @@ export function desarrolloSolamenteUrl(url) {
 	localStorage.pa_api_desarrollo= url;
 }
 
-export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin }
+export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin, apiGQL, apiModificar, apiConsultar }
