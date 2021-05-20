@@ -1,7 +1,9 @@
-//INFO: leer y actualizar una todo list con la API de PodemosAprender
+//INFO: comparar charlas, ej leer y actualizar una todo list con la API de PodemosAprender
+jest.setTimeout(20000);
 
 import PaApi, {desarrolloSolamenteUrl, apiConsultar, apiModificar} from '../../services/pa-api.js';
 
+//S: TODO: mover a las librerias *****************************
 const logm= (msg, data) => {
 	console.log(msg, JSON.stringify(data, null,1));
 }
@@ -16,6 +18,7 @@ async function textoCrear(textoEnviado, charlaTitulo, orden) {
 	return res;
 }
 
+//S: idea para todo ******************************************
 async function todoTareas(charlaModelo) {
 	const todo_list_res= await apiConsultar(
 		['textoLista', 'id','texto','fhCreado',['deQuien','username'],['charlaitemSet','orden']], 
@@ -49,13 +52,13 @@ async function todoRegistrarEvidencia(charlaModelo, username, tareaId) {
 	await textoCrear(`EVIDENCIA de la tarea ${tareaId} de ${charlaModelo}`, charlaRegistro, tareaId);
 }
 
-jest.setTimeout(20000);
+//S: como se usa *********************************************
+
 it('crearLeerYActualizarTodo', async () => { 
 	desarrolloSolamenteUrl('http://localhost:8000');
 	const login_res= await PaApi.apiLogin('admin','secreto');
 	//DBG: console.log("login_res",login_res);
 
-	//S: crear una todo list
 	const charlaModelo= '#borrame_todo_'+(new Date().getTime())
 	const textoSimulado= 'Desde #borrame_test_automatico a las '+(new Date());
 	for (let tareaNum= 0; tareaNum<5; tareaNum++) {

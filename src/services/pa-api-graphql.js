@@ -225,7 +225,6 @@ export function simplificarRespuesta(res,consultaId) { //U: siguiendo convencion
 		const d= d0.node || d0;	
 		const r= {};
 		Object.entries(d).map( ([k,v]) => {
-			if (k=='charlaitemSet') { console.log(typeof(v),k,v); }
 			r[k]= (
 				k.startsWith('fh') 
 				? fechaParaTexto(v) 
@@ -240,7 +239,7 @@ export function simplificarRespuesta(res,consultaId) { //U: siguiendo convencion
 	}
 
 	const datos= simplificarDatos(res_data || []);
-	console.log('GraphQl simplificarRespuesta',consultaId, datos,res)
+	//DBG: console.log('GraphQl simplificarRespuesta',consultaId, datos,res)
 	return datos;
 }
 
