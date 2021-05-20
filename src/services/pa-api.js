@@ -218,6 +218,7 @@ export async function apiConsultar(query, filtros) { //U: genera y ejecuta consu
 		query,	
 		filtros	
 	);
+	console.log('apiConsultar',qs,query,filtros);
 	const res= await fetchConToken({query: qs});
 	return res;
 }

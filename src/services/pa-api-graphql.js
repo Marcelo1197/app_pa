@@ -26,9 +26,7 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 				const e= simplificarType(q.type);
 				e.params= {};
 				q.args.forEach(a => {
-					if (['first','last','offset','before','after'].indexOf(a.name)==-1) {
-						e.params[a.name]= simplificarType(a.type);
-					}
+					e.params[a.name]= simplificarType(a.type);
 				})
 				schemaSimple.consultas[q.name]= e;
 			});
@@ -58,9 +56,7 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 					if (field.args) {
 						f.params= {};
 						field.args.forEach(a => {
-							if (['first','last','offset','before','after'].indexOf(a.name)==-1) {
-								f.params[a.name]= simplificarType(a.type);
-							}
+							f.params[a.name]= simplificarType(a.type);
 						})
 					}
 					e.fields[field.name]= f;
@@ -141,21 +137,24 @@ function generarUnParam(t,v) { //U: solo para escalares, no listas
 	return vs;
 }
 
-function generarParams(t,valores,schema) {
+function generarParams(t,valores,schema, path) {
+	path= path || '';
 	const def= typeof(t)=='string' ? (schema.consultas[t] || schema.tipos[t]) : t;
 	if (def==null) { console.error('GraphQl params tipo desconocido',t); return ''; }
 	const tipo_params= def.params;
 	//DBG: console.log('generarParams',t, tipo_params);
 	const param_s= Object.entries(tipo_params).map( ([k,t]) => {
-		let v= valores[k] || valores['*'+k]; //U: si pongo *charlaTitulo filtra a todos los niveles
+		let v= valores[path+k] || valores['*'+k]; //U: si pongo *charlaTitulo filtra a todos los niveles
 		//TODO: agregar prefijo
 		if (v==null) { return '' } //A: no hay valor, no ponemos nada
 		if (t==null) { console.error('GraphQl parámetro tipo desconocido',k,v,t,tipo_params); return ''; }
-		//DBG: console.log(k,t);
+		//DBG: 
 		const vs= t.k=='LIST'
 			? '['+ v.map( v1 => generarUnParam(t,v1)).join(', ')+']'
 			: generarUnParam(t,v);
-		return ` ${k}: ${vs} `	
+		const txt= ` ${k}: ${vs} `	
+		//DBG: console.log('pa-api-graphql generarParams k,t,v,txt', k,t,v,txt);
+		return txt;
 	}).join('');
 	return param_s=='' ? null : param_s;
 }

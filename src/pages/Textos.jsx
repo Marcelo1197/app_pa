@@ -17,12 +17,16 @@ import Container from '@material-ui/core/Container';
 export default function Textos() {
 	const history= useHistory();
 	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
-	const [textos, filtros, setFiltros]= usePaApiConsulta();
+	const [textos, filtros, setFiltros]= usePaApiConsulta(
+		['textoLista', 'id','texto','fhCreado',['deQuien','username']],
+		{orderBy:['-fhCreado'], first: 3},
+	);
 
 	useEffect(() => {
 		setFiltros({ ...filtros, 
+			first: 3,
 			fhEditado_Lt: fechaParaTexto( urlSearchParams['fh_max'] ),
-			enCharla: urlSearchParams['charla'],
+			charla_Titulo: urlSearchParams['charla'],
 			deQuien_Username: urlSearchParams['de'],
 		});
 		console.log('Texto filtros', filtros);

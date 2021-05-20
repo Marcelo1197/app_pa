@@ -5,57 +5,36 @@ import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender'
 
 import { fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
 
-const PorPagina= 3;
-function generarGraphQl(filtros) {
-	const filtros_txt= Object.entries(filtros)
-		.map( ([k,v]) => (v!=null ? `${k}: "${(v instanceof Date ? v.toISOString() : v)}"` : ''))
-		.join("\n");
-
-	const q= `
-		{ textoLista (
-				${filtros_txt}
-				first: 3
-				orderBy: ["-fhCreado"]
-			) 
-			{ edges { node { 
-				id
-				deQuien { username }
-				fhCreado
-				texto    
-			}}}
-		}
-	`;
-	//DBG: 
-	console.log("Textos consulta",filtros, q);
-	return q;
-};
-
-export function usePaApiConsulta(consultaInicial) {
-	const servidorPodemosAprender= useServidorPodemosAprender();
+export function usePaApiConsulta(consultaInicial, filtrosInicial) {
+	const { consultar: apiConsultar }= useServidorPodemosAprender();
 
 	const [datos, setDatos]= useState([]); //A: los datos que trajimos
-	const [filtros, setFiltros]= useState({}); //A: los filtros que aplicamos
+	const [filtros, setFiltros]= useState(filtrosInicial || {}); //A: los filtros que aplicamos
 	const [consulta, setConsulta]= useState(consultaInicial); //A: la consulta a ejecutar
 
-	useEffect(() => {
-		(async () => {
-			console.log("buscandoDatos",filtros); 
-			const res= await servidorPodemosAprender.fetch({query: generarGraphQl(filtros)});
-
-			//DBG: console.log(JSON.stringify(res.data.textoLista.edges, null, 1));
-			const datos= res.data.textoLista.edges.map( item => ({
+	const ejecutarConsulta= (async () => {
+		const res= await apiConsultar(consulta, filtros);
+		//DBG: 
+		console.log('usePaApiConsulta filtros y datos',filtros, JSON.stringify(res.data, null, 1));
+		const datos= res.data?.textoLista 
+			? res.data.textoLista.edges.map( item => ({
 				fhCreado: fechaParaTexto(item.node.fhCreado),
 				deQuien: item.node.deQuien.username,
 				texto: item.node.texto,
 				textoId: item.node.id,
-			}));	
-			//DBG: console.log(JSON.stringify(datos, null, 1));
+			}))
+			: [];	
+		//DBG: 
+		console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
 
-			setDatos(datos);
-			//TODO: errores de red, etc
-		})();
+		setDatos(datos);
+		//TODO: errores de red, etc
+	});
+
+	useEffect(() => {
+		ejecutarConsulta();	
 	}, [filtros, consulta]); //A: repetir la consulta si cambia filtros
 
-	return [datos, filtros, setFiltros, setConsulta];
+	return [datos, filtros, setFiltros, ejecutarConsulta, setConsulta];
 }
 
