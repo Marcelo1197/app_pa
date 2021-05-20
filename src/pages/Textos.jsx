@@ -16,20 +16,21 @@ import Container from '@material-ui/core/Container';
 
 export default function Textos() {
 	const history= useHistory();
-	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
-	const {datos: textos, filtros, setFiltros, estado}= usePaApiConsulta(
-		['textoLista', 'id','texto','fhCreado',['deQuien','username']],
-		{orderBy:['-fhCreado'], first: 3},
-	);
 
-	useEffect(() => {
-		setFiltros({ ...filtros, 
-			first: 3,
+	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
+	const filtrosParaUrlParams= () => ({
 			fhEditado_Lt: fechaParaTexto( urlSearchParams['fh_max'] ),
 			charla_Titulo: urlSearchParams['charla'],
 			deQuien_Username: urlSearchParams['de'],
-		});
-		console.log('Texto filtros', filtros);
+	})
+
+	const {datos: textos, filtros, setFiltros, estado}= usePaApiConsulta(
+		['textoLista', 'id','texto','fhCreado',['deQuien','username']],
+		{orderBy:['-fhCreado'], first: 3, ...(filtrosParaUrlParams())},
+	);
+
+	useEffect(() => {
+		setFiltros({ ...filtros, ...(filtrosParaUrlParams())});
 	}, [urlSearchParams]); //A: repetir la consulta si cambia VALORES de query params 
 
 	const fh_max_proxima= new Date(new Date(textos.reduce((acc, t) => Math.max(acc, t.fhCreado), 0)));
