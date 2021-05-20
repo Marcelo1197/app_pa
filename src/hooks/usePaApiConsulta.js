@@ -11,8 +11,10 @@ export function usePaApiConsulta(consultaInicial, filtrosInicial) {
 	const [datos, setDatos]= useState([]); //A: los datos que trajimos
 	const [filtros, setFiltros]= useState(filtrosInicial || {}); //A: los filtros que aplicamos
 	const [consulta, setConsulta]= useState(consultaInicial); //A: la consulta a ejecutar
+	const [estado, setEstado]= useState('');
 
 	const ejecutarConsulta= (async () => {
+		setEstado('procesando');
 		const res= await apiConsultar(consulta, filtros);
 		//DBG: 
 		console.log('usePaApiConsulta filtros y datos',filtros, JSON.stringify(res.data, null, 1));
@@ -24,17 +26,16 @@ export function usePaApiConsulta(consultaInicial, filtrosInicial) {
 				textoId: item.node.id,
 			}))
 			: [];	
-		//DBG: 
-		console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
-
-		setDatos(datos);
+		//DBG: console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
 		//TODO: errores de red, etc
+		setEstado('listo');
+		setDatos(datos);
 	});
 
 	useEffect(() => {
 		ejecutarConsulta();	
 	}, [filtros, consulta]); //A: repetir la consulta si cambia filtros
 
-	return [datos, filtros, setFiltros, ejecutarConsulta, setConsulta];
+	return {datos, filtros, setFiltros, ejecutarConsulta, setConsulta, estado};
 }
 

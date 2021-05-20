@@ -17,7 +17,7 @@ import Container from '@material-ui/core/Container';
 export default function Textos() {
 	const history= useHistory();
 	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
-	const [textos, filtros, setFiltros]= usePaApiConsulta(
+	const {datos: textos, filtros, setFiltros, estado}= usePaApiConsulta(
 		['textoLista', 'id','texto','fhCreado',['deQuien','username']],
 		{orderBy:['-fhCreado'], first: 3},
 	);
@@ -48,7 +48,7 @@ export default function Textos() {
 			<h2>
 				Textos {filtros.fhEditado_Lt ? `(desde ${fechaLegible(filtros.fhEditado_Lt)})`: ''}
 			</h2>
-
+			{estado}
 			<TextoFiltros 
 				filtros={urlSearchParams} 
 				setFiltros={cuandoCambiaFiltros}
