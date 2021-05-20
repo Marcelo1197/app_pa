@@ -15,6 +15,7 @@ import Textos from './pages/Textos';
 
 import QueHago from './pages/QueHago';
 import PaginaTexto from './pages/Texto';
+import PaginaTextoEditar from './pages/TextoEditar';
 import Charla from './pages/Charla';
 
 import PaginaModoDesarrollo from './pages/ModoDesarrollo';
@@ -56,6 +57,11 @@ const MenuYRutas = [
     pagina: PaginaTexto,
   },
 	{
+    path: '/texto_editar/:textoid',
+		esPrefijo: true,
+    pagina: PaginaTextoEditar,
+  },
+	{
     path: '/charla/:charlaid',
 		esPrefijo: true,
     pagina: Charla,
@@ -66,6 +72,12 @@ const MenuYRutas = [
 		dsc: 'Textos',
     pagina: Textos,
   },
+	{
+		dsc: 'Texto Nuevo',
+  	accion: ({history, usuario}) => {
+			history.push({ pathname: '/texto_editar/nuevo' });
+		},
+	},
 
 	{ divisor: true },
   {

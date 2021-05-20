@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
+
 import { fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
 
 const PorPagina= 3;
@@ -38,7 +39,7 @@ export function usePaApiConsulta(consultaInicial) {
 
 	useEffect(() => {
 		(async () => {
-			console.log("Texto buscandoDatos",filtros); 
+			console.log("buscandoDatos",filtros); 
 			const res= await servidorPodemosAprender.fetch({query: generarGraphQl(filtros)});
 
 			//DBG: console.log(JSON.stringify(res.data.textoLista.edges, null, 1));

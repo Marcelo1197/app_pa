@@ -78,7 +78,9 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
     usuario, //U: el estado reactivo para que se actualicen dependientes
     login, //U: funcion para loguearse
     logout, //U: funcion para desloguearse
-		fetch, //U: para enviar y traer datos via graphql	
+		fetch, //OBSOLETO, usar 'consultar' y 'modificar'
+		consultar: PaApi.apiConsultar,//U: para enviar y traer datos via graphql	
+		modificar: PaApi.apiModificar,//U: para enviar y traer datos via graphql	
   };
 }
 

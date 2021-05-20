@@ -24,22 +24,22 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 		if (t.name=='Consultas') {
 			t.fields.forEach( q => {
 				const e= simplificarType(q.type);
-				e.params= {},
-					q.args.forEach(a => {
-						if (['first','last','offset','before','after'].indexOf(a.name)==-1) {
-							e.params[a.name]= simplificarType(a.type);
-						}
-					})
+				e.params= {};
+				q.args.forEach(a => {
+					if (['first','last','offset','before','after'].indexOf(a.name)==-1) {
+						e.params[a.name]= simplificarType(a.type);
+					}
+				})
 				schemaSimple.consultas[q.name]= e;
 			});
 		}
 		else if (t.name=='Modificaciones') {
 			t.fields.forEach( modif => {
 				const e= simplificarType(modif.type);
-				e.params= {},
-					modif.args.forEach(a => {
-						e.params[a.name]= simplificarType(a.type);
-					})
+				e.params= {};
+				modif.args.forEach(a => {
+					e.params[a.name]= simplificarType(a.type);
+				})
 				schemaSimple.modificaciones[modif.name]= e;
 			});
 		}
