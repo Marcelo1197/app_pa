@@ -1,5 +1,7 @@
 //INFO: generar consultas a partir del esquema que devuelve graphene
 
+import { fechaParaTexto } from '../services/pa-lib';
+
 export const GraphQlSchemaQuery='query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name } } } } } } } }'; //U: la misma que usa graphiQl de Django 
 
 function simplificarType(t) { 
@@ -214,11 +216,37 @@ console.log( generarMutation(
 
 */
 
+export function simplificarRespuesta(res,consultaId) { //U: siguiendo convenciones para no repetir codigo por todos lados
+	const res_data= res.data && res.data[consultaId];
+
+	const simplificarDatos= (d0) => {
+		if (d0.edges) { return d0.edges.map(simplificarDatos) }
+
+		const d= d0.node || d0;	
+		const r= {};
+		Object.entries(d).map( ([k,v]) => {
+			r[k]= (
+				k.startsWith('fh') 
+				? fechaParaTexto(v) 
+				: k=='deQuien'
+				? v.username
+				: v
+			);
+		});
+		return r;
+	}
+
+	const datos= simplificarDatos(res_data || []);
+	console.log('GraphQl simplificarRespuesta',consultaId, datos,res)
+	return datos;
+}
+
 export default function GraphqlGeneradorPara(schemaDeGrapheneDjango) {
 	const schema= schemaSimplificadoPara(schemaDeGrapheneDjango);
 	return {
 		schema,
 		consulta: function consulta(qm, filtros) { return generarQuery(qm, filtros, schema); },
 		modificacion: function modificacion(modificacionId, modificacionValores, query) { return generarMutation(modificacionId, modificacionValores, query, schema); },
+		simplificarRespuesta: simplificarRespuesta,
 	};
 }

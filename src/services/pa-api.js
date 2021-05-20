@@ -202,25 +202,28 @@ export async function apiGQL(quiereVolverALeer) {
 }
 
 //VER: test/services/pa-api-todo.test.js 
+		
 export async function apiModificar(modificacionId, valores, query) { //U: genera y ejecuta mutation graphQl
-	const qs= (await apiGQL()).modificacion(
+	const api= await apiGQL();
+	const qs= api.modificacion(
 		modificacionId,	
 		valores,	
 		query
 	);
 	const res= await fetchConToken({ query: qs });	
 	//DBG: console.log(JSON.stringify(res,null,1));
-	return res;
+	return api.simplificarRespuesta(res, modificacionId);
 }
 
 export async function apiConsultar(query, filtros, signal) { //U: genera y ejecuta consula graphql
-	const qs= (await apiGQL()).consulta(
+	const api= await apiGQL();
+	const qs= api.consulta(
 		query,	
 		filtros	
 	);
 	console.log('apiConsultar',qs,query,filtros);
 	const res= await fetchConToken({query: qs}, {signal});
-	return res;
+	return api.simplificarRespuesta(res, query[0]);
 }
 
 

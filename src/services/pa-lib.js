@@ -4,7 +4,7 @@ import marked from 'marked';
 
 //S: urls ****************************************************
 export function urlParamsParaDiccionario(params) {
-	console.log(params);
+	//console.log('urlParamsParaDiccionario',params);
 	const r= Object.entries(params)
 		.filter(([k,v]) => v!=null)
 		.map( ([k,v]) => 

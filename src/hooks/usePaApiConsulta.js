@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
 
-import { fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
 
 export function usePaApiConsulta(consultaInicial, filtrosInicial) {
 	const { consultar: apiConsultar }= useServidorPodemosAprender();
@@ -20,22 +19,20 @@ export function usePaApiConsulta(consultaInicial, filtrosInicial) {
 		setEstado('ERROR: cancelada');
 	};
 
-	const ejecutarConsulta= (async () => {
+	const ejecutarConsulta= (async () => { //U: la parte async, para no esperar despues de abort
 		abortController.abort(); //A: si habia request anterior, detenerlo
+
+		if (filtros==null || consulta==null) { //A: no quiere consultar
+			setEstado('noconsulta');
+			setDatos(null);
+		}
 
 		abortController= new AbortController();  //U: nuevo, para este fetch
 		setEstado('procesando');
-		const res= await apiConsultar(consulta, filtros, abortController.signal);
+		const datos= await apiConsultar(consulta, filtros, abortController.signal);
 		//DBG: console.log('usePaApiConsulta filtros y datos',filtros, JSON.stringify(res.data, null, 1));
-		const datos= res.data?.textoLista 
-			? res.data.textoLista.edges.map( item => ({
-				fhCreado: fechaParaTexto(item.node.fhCreado),
-				deQuien: item.node.deQuien.username,
-				texto: item.node.texto,
-				textoId: item.node.id,
-			}))
-			: [];	
-		//DBG: console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
+		//DBG: 
+		console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
 		//TODO: errores de red, etc
 		setEstado('listo');
 		setDatos(datos);
