@@ -51,9 +51,10 @@ async function preguntaFormular(texto, enQueCharla, clave) {
 	await textoCrear(texto, enQueCharla, `Pregunta/${clave}/P`); //TODO: debe existir, limitar largo y caracteres de la clave
 }
 
-async function preguntaPendientes(enQueCharla, clave) {
-	return await charlaitemsAdiccionario(`Pregunta/${clave||''}`, enQueCharla, null, true);
+async function preguntaPendientes(enQueCharla, clave, username) {
+	return await charlaitemsAdiccionario(`Pregunta/${clave||''}`, enQueCharla, username, true);
 }
+
 
 async function preguntaResponder(textoRespuesta, enQueCharla, clavePregunta) {
 	const claveRespuesta= new Date().getTime(); //TODO: o leemos un array de respuestas o le ponemos clave unica a c/u, esta NO es una clave unica muy segura pero zafa
@@ -82,11 +83,12 @@ it('hacerPreguntasYRecibirRespuestas', async () => {
 	}
 	//A: participanteA creo un todo con una lista de preguntas, las identifica el ORDEN
 
-	//S: participanteB busca preguntas sin responder en esa charla y responde la 3 y la 4
+	//UX: participanteB busca preguntas sin responder en esa charla y responde la 3 y la 4
 	let username_participante= 'pepita';
 	let login_participante_res= await PaApi.apiLogin(username_participante,'secreto');
+	console.log('login pepita',login_participante_res)
+	expect(PaApi.usuarioLeer()).toEqual('pepita');
 
-	//UX: la participante pepita se copia la charla modelo a un plan suyo
 	const paraResponder= await preguntaPendientes(charlaModelo);
 	logm('paraResponder 1 ',paraResponder);
 
@@ -105,9 +107,11 @@ it('hacerPreguntasYRecibirRespuestas', async () => {
 	logm('preguntas despues de pepita ',preguntas);
 	//TODO: como filtro cuales me interesan? opcion1: les puedo cambiar la clave y que no empiece con Pregunta
 
-	//S: participanteC busca preguntas sin responder en esa charla y responde la 3 y la 2
+	//UX: participanteC busca preguntas sin responder en esa charla y responde la 3 y la 2
 	username_participante= 'juan';
 	login_participante_res= await PaApi.apiLogin(username_participante,'secreto');
+	console.log('login juan',login_participante_res)
+	expect(PaApi.usuarioLeer()).toEqual('juan');
 
 	//A: omito las consultas anteriores por brevedad
 
@@ -124,5 +128,13 @@ it('hacerPreguntasYRecibirRespuestas', async () => {
 
 	expect(Object.keys(preguntasDespuesDeJuan.Pregunta.comoHago3paso.R).length).toEqual(2);
 	expect(Object.keys(preguntasDespuesDeJuan.Pregunta.comoHago4paso.R).length).toEqual(1);
+
+	//UX: el que hizo una pregunta quiere ver las respuestas más recientes
+	username_participante= 'admin';
+	login_participante_res= await PaApi.apiLogin(username_participante,'secreto');
+
+	const preguntasDeAdmin= await preguntaPendientes(charlaModelo,null,username_participante);
+	logm('preguntas de usuario', {username_participante, preguntasDeAdmin});
+
 });
 
