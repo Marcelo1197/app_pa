@@ -27,6 +27,7 @@ export default function TextoFiltros({filtros, setFiltros}) {
 	const classes = useStyles();
 
 	const cuandoPideBorrar= (k) => {
+		console.log('TextoFiltros cuandoPideBorrar',k, filtros);
 		setFiltros({ ...filtros, [k]: null });
 	}
 
@@ -43,6 +44,7 @@ export default function TextoFiltros({filtros, setFiltros}) {
 				return (
 					<Chip key={k}
 						onDelete={() => cuandoPideBorrar(k)}
+						onClick={() => cuandoPideBorrar(k)}
 						label={txt}
 						icon={icon}
 					>

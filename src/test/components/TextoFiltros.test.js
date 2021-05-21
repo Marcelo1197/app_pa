@@ -40,7 +40,8 @@ test('Un filtro solo, y lo elimino', () => {
 
 	expect(container.textContent).toBe('ahora');
 
-	const btnFHMax = xpathFind("//button//*[text()='ahora']"); //A: hay varios elementos dentro del button
+	const btnFHMax = xpathFind("//*[@role='button']//*[text()='ahora']"); //A: hay varios elementos dentro del button
+	expect( btnFHMax ).not.toBeNull();
 	act( () => { click(btnFHMax); });
 
 	expect(cuandoCambiaFiltros.mock.calls.length).toBe(1); //A: la llamaron una vez
@@ -60,8 +61,9 @@ test('Varios filtros, elimino uno', () => {
 	});
 
 	expect(container.textContent).toBe('ahoramauriciocap');
-
-	const btnFHMax = xpathFind("//button//*[text()='ahora']"); //A: hay varios elementos dentro del button
+	//VER: https://devhints.io/xpath
+	const btnFHMax = xpathFind("//*[@role='button']//*[text()='ahora']"); //A: hay varios elementos dentro del button
+	expect( btnFHMax ).not.toBeNull();
 	act( () => { click(btnFHMax); });
 
 	expect(cuandoCambiaFiltros.mock.calls.length).toBe(1); //A: la llamaron una vez
