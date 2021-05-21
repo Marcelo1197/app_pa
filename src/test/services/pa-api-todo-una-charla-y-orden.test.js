@@ -60,6 +60,7 @@ it('crearLeerYActualizarTodoEnUnaCharla', async () => {
 	const login_res= await PaApi.apiLogin('admin','secreto');
 	//DBG: console.log("login_res",login_res);
 
+	//UX: el usuario admin crea un ToDo en una charla, ej para la bandaReActiva
 	const charlaModelo= '#borrame_todo_'+(new Date().getTime())
 
 	const textoSimulado= 'Desde #borrame_test_automatico a las '+(new Date());
@@ -72,6 +73,7 @@ it('crearLeerYActualizarTodoEnUnaCharla', async () => {
 	const username_participante= 'pepita';
 	const login_participante_res= await PaApi.apiLogin(username_participante,'secreto');
 
+	//UX: la participante pepita se copia la charla modelo a un plan suyo
 	const modelo= await charlaAdiccionario(charlaModelo,null,true);
 	logm('tareasYestado MODELO',modelo);
 
@@ -84,11 +86,13 @@ it('crearLeerYActualizarTodoEnUnaCharla', async () => {
 	}
 	//A: participante copio la charla a sus todos
 	
+	//UX: a medida que pepita va terminando tareas (ToDo) agrega evidencia de que las termino, se ordenan abajo
 	const tareaQueTermino= Object.keys(modelo.ToDo)[1]; //A: asi la elegiria en la UI
 	await textoCrear('me.salio.re.bien #borrame', charlaDeParticipante, 'ToDo/'+tareaQueTermino+'/evidencia/url'); 
 	const tareaQueDuda= Object.keys(modelo.ToDo)[3]; //A: asi la elegiria en la UI
 	await textoCrear('No entiendo nada! #borrame', charlaDeParticipante, 'ToDo/'+tareaQueTermino+'/pregunta/1'); 
 
+	//UX: cualquiera puede tomar una charla y ver que tareas estan pendientes, la evidencia, etc.
 	const estado= await charlaAdiccionario(charlaDeParticipante,null,true);
 	logm('tareasYestado ESTADO despues de evidencia y pregunta',estado);
 });

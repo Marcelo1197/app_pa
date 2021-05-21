@@ -97,21 +97,31 @@ var HASHTAG_RE= /(^|\s)#([A-Za-záéíóúüñÁÉÍÓÚÜÑ0-9_\.]+)/g;
 var USUARIO_RE= /(^|\s)@([A-Za-z0-9_\.-]+)/g;
 export function markdownTransformarHTML(src, el_id) { //U: convierte "nuestro" markdown en html, pura y facil de debuggear
 	//TODO: No reemplazar hash en urls
-	var t= {src: src}
+	var t= {src: src, };
 	t.txt_con_video = t.src.replace(/https:\/\/www.youtube.com\/watch\S+/g, youtubeUrlAEmbed);
 	t.txt_con_diagramas = t.txt_con_video.replace(PLANTUML_REGEX, plantumlImgHtmlPara);
 
+	var tags= {}; var usernames= {};
 	t.txt_con_tags = t.txt_con_diagramas.replace(HASHTAG_RE, 
-		(m,m1,m2) => (m1+hashtagAMarkdownLink('#'+m2, '#'+el_id))); 
+		(m,m1,m2) => { tags['#'+m2]=1; return (m1+hashtagAMarkdownLink('#'+m2, '#'+el_id)) }); 
 	//A: busco y reemplazo hashtags con links markdown
 	t.txt_con_usuarios = t.txt_con_tags.replace( USUARIO_RE,
-		(m,m1,m2) => (m1+usuarioAMarkdownLink('@'+m2))); 
+		(m,m1,m2) => { usernames['@'+m2]=1; return (m1+usuarioAMarkdownLink('@'+m2)) }); 
 	//A: busco y reemplazo usuarios con links markdown
-	t.markdown_generado = t.txt_con_usuarios;
-	t.markedHtml= marked(t.markdown_generado); //A: convierto markdown a html
+	if (el_id!='SOLO_QUIERO_DATOS') {
+		t.markdown_generado = t.txt_con_usuarios;
+		t.markedHtml= marked(t.markdown_generado); //A: convierto markdown a html
+	}
+	t.tags= Object.keys(tags);
+	t.participantes= Object.keys(usernames);
 	//DBG: console.log('markdownTransformarHTML', t);
 	//TODO:SEC sanitizar, que no nos injecten javascript que se robe el token por ej
 	return t;
+}
+
+export function markdownReferencias(src) { //U: extrae las referencias a charlas y participantes
+	const t= markdownTransformarHTML(src,'SOLO_QUIERO_DATOS');
+	return {tags: t.tags, participantes: t.participantes};
 }
 
 //S: fechas **************************************************
