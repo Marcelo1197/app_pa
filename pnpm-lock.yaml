@@ -10,8 +10,10 @@ specifiers:
   '@testing-library/user-event': ^12.1.10
   clsx: ^1.1.1
   marked: ^2.0.3
+  ramda: ^0.27.1
   react: ^17.0.2
   react-dom: ^17.0.2
+  react-lorem-ipsum: ^1.4.9
   react-router-dom: ^5.2.0
   react-scripts: 4.0.3
   web-vitals: ^1.0.1
@@ -26,8 +28,10 @@ dependencies:
   '@testing-library/user-event': 12.8.3
   clsx: 1.1.1
   marked: 2.0.3
+  ramda: 0.27.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
+  react-lorem-ipsum: 1.4.9
   react-router-dom: 5.2.0_react@17.0.2
   react-scripts: 4.0.3_react@17.0.2
   web-vitals: 1.1.2
@@ -9521,6 +9525,10 @@ packages:
       performance-now: 2.1.0
     dev: false
 
+  /ramda/0.27.1:
+    resolution: {integrity: sha512-PgIdVpn5y5Yns8vqb8FzBUEYn98V3xcPgawAkkgj0YJ0qDsnHCiNmZYfOGMgOvoB0eWFLpYbhxUR3mxfDIMvpw==}
+    dev: false
+
   /randombytes/2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
     dependencies:
@@ -9612,6 +9620,10 @@ packages:
 
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
+    dev: false
+
+  /react-lorem-ipsum/1.4.9:
+    resolution: {integrity: sha512-maYf2KTltui/Fnxrq2ttoKnpIm9JO6j5aYeNvCjEPCKGVMJwWNFL75Nb9hgXnMQGHTHSR4KBSIUnCPD3CzSh3g==}
     dev: false
 
   /react-refresh/0.8.3:
