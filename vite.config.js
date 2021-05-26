@@ -3,7 +3,9 @@ import reactRefresh from "@vitejs/plugin-react-refresh";
 //import eslint from 'vite-plugin-eslint';
 import fs from "fs";
 
-const HMR_PORT=process.env.PROJECT_REMIX_CHAIN ? 8443 : null; //A: en glitch usamos 8443
+const estamosEnGlitch= process.env.PROJECT_REMIX_CHAIN!=null //A: la encontre con set en consola de glitch
+const HMR_PORT= estamosEnGlitch ? 443 : null; 
+//A: En glitch hay que indicarle al navegador que se conecte al de https pubico donde se ve la pagina
 console.log('HMR_PORT',HMR_PORT);
 
 // https://vitejs.dev/config/
