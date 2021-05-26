@@ -3,6 +3,9 @@ import reactRefresh from "@vitejs/plugin-react-refresh";
 //import eslint from 'vite-plugin-eslint';
 import fs from "fs";
 
+const HMR_PORT=process.env.PROJECT_REMIX_CHAIN ? 8443 : null; //A: en glitch usamos 8443
+console.log('HMR_PORT',HMR_PORT);
+
 // https://vitejs.dev/config/
 export default defineConfig({
 	esbuild: { loader: "jsx", include: /src\/.*\.jsx?$/, exclude: [] }, 
@@ -22,7 +25,7 @@ export default defineConfig({
 	server: {
 		strictPort: true,
 			hmr: {
-				//port: 8443 // Run the websocket server on the SSL port
+				port: HMR_PORT,
 			}
 	}
 });
