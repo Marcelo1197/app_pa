@@ -129,11 +129,11 @@ export default function App() {
 	const theme = useMemo( () =>
 		createMuiTheme({
 			palette: {
-				type: (prefersDarkMode) ? 'dark' : 'light',
+				type: (false && prefersDarkMode) ? 'dark' : 'light',
 				//ToDo: funciona PERO en dark no se ven links, etc.
         background: {
-          default: '#300',
-          paper: '#003'
+          default: '#eee',
+          paper: '#fff'
         }
 			},
 		}),
