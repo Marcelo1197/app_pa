@@ -123,19 +123,23 @@ const MenuYRutas = [
 ];
 
 export default function App() {
-	/*
+	
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
 	const theme = useMemo( () =>
 		createMuiTheme({
 			palette: {
-				type: (false && prefersDarkMode) ? 'dark' : 'light',
+				type: (prefersDarkMode) ? 'dark' : 'light',
 				//ToDo: funciona PERO en dark no se ven links, etc.
+        background: {
+          default: '#300',
+          paper: '#003'
+        }
 			},
 		}),
 		[prefersDarkMode],
 	);
-	*/
+	
 
 	return (
 		<ThemeProvider theme={theme}>
