@@ -21,7 +21,7 @@ export default defineConfig({
 	server: {
 		strictPort: true,
 			hmr: {
-				port: 8443,
+				port: HMR_PORT,
 			}
 	}
 });
