@@ -7,15 +7,14 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {
 	BrowserRouter as Router,
 	Switch,
-	Route,
 	Link as RouterLink,
-	useHistory,
 } from "react-router-dom";
 import Link from "@material-ui/core/Link";
 
-import { useState, useEffect } from "react";
 import { useRutasConLogin } from '../hooks/useRutasConLogin';
 import { RutaConLogin } from './RutaConLogin';
+
+import {MenuIcon} from './Logo';
 
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -25,7 +24,6 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import SvgIcon from '@material-ui/core/SvgIcon';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -34,9 +32,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 //VER: https://material-ui.com/components/icons/#component-prop
-//import MenuIcon from '@material-ui/icons/Menu';
-import LogoGris from '../logo_gris.svg';
-const MenuIcon= () => (<img src={LogoGris} style={{width: '40px'}} />)
 
 const drawerWidth = 240;
 
@@ -117,7 +112,7 @@ function ListItemLink(props) {
 			//DBG: console.log('Click',primary); 
 			cerrarMenu();	
 			accionOk(rutasConLoginHook);
-			}) 
+		}) 
 		: cerrarMenu); //A: paso el hook para que pueda ej logout
 
 	const renderLinkOk = (to !=null) ? renderLink : ((itemProps) => (<Link {...itemProps}/>));
@@ -149,14 +144,14 @@ export default function AppMenuLateral(props) {
 
 	const BtnMenuAbrir = () => (
 		<IconButton
-			 color="inherit"
-			 aria-label="open drawer"
-			 onClick={handleDrawerOpen}
-			 edge="start"
-			 className={clsx(classes.menuButton, open && classes.hide)}
-		 >
-			 <MenuIcon />
-		 </IconButton>
+			color="inherit"
+			aria-label="open drawer"
+			onClick={handleDrawerOpen}
+			edge="start"
+			className={clsx(classes.menuButton, open && classes.hide)}
+		>
+		 <MenuIcon color={theme.palette.secondary.dark}/>
+		</IconButton>
 	);
 
 	const BtnMenuCerrar = () => (
@@ -189,8 +184,8 @@ export default function AppMenuLateral(props) {
 			className={clsx(classes.content, { [classes.contentShift]: open, })}
 		>
 			<div className={classes.drawerHeader} />
-				<Switch>
-					{props.menu_y_rutas
+			<Switch>
+				{props.menu_y_rutas
 						.filter((datosRuta) => (datosRuta.pagina!=null))
 						.map((datosRuta, index) => (
 							<RutaConLogin
@@ -200,28 +195,28 @@ export default function AppMenuLateral(props) {
 								children={<datosRuta.pagina />}
 								necesitaLogin={!datosRuta.noNecesitaLogin}	
 							/>
-					))}
-				</Switch>	
+						))}
+			</Switch>	
 		</main>
 	);
-	
+
 	const ItemsDelMenuConLinksALasRutas= () => (
 		<List>
 			{
 				props.menu_y_rutas
-				.map((ruta, index) => (
-					ruta.divisor 
+					.map((ruta, index) => (
+				ruta.divisor 
 					? <Divider />
 					: ruta.seccion
-					? (<>
+						? (<>
 							<Divider />
 							<div style={{backgroundColor: 'darkgray', color: 'white'}}>{ruta.seccion}</div>
 						</>)
-					: ruta.dsc
-					? ( <ListItemLink accion={ruta.accion} to={ruta.linkTo || ruta.path} icon={ruta.icono} primary={ruta.dsc} cerrarMenu={handleDrawerClose} /> )
-					: null
-				))
-				.filter( e => e!=null) //A: solo si no son null
+						: ruta.dsc
+							? ( <ListItemLink accion={ruta.accion} to={ruta.linkTo || ruta.path} icon={ruta.icono} primary={ruta.dsc} cerrarMenu={handleDrawerClose} /> )
+							: null
+					))
+					.filter( e => e!=null) //A: solo si no son null
 			}
 		</List>
 	);
@@ -232,7 +227,7 @@ export default function AppMenuLateral(props) {
 				<CssBaseline />
 
 				<BarraNavegacion />
-		
+
 				<Drawer
 					className={classes.drawer}
 					variant="persistent"

@@ -72,7 +72,7 @@ export default function TextoCard({texto, urlSearchParams}) {
 					</IconButton>
 				}
 				title={<Link to={LinkParticipanteTo}>{texto.deQuien}</Link>}
-				subheader={fechaLegible( texto.fhCreado )}
+				subheader={fechaLegible( texto.fhEditado || texto.fhCreado )}
 			/>
 
 			<CardContent>

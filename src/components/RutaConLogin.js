@@ -1,5 +1,6 @@
 //INFO: como se usa ServidorPodemosAprender y RutaProtegida
 
+import React from 'react'; //U: necesario despues de transformar jsx
 import { Route, Redirect } from 'react-router-dom';
 import { useRutasConLogin } from '../hooks/useRutasConLogin';
 

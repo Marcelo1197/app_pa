@@ -1,52 +1,38 @@
 //INFO: pantalla de login en podemos aprender
 
-import { useState, useEffect } from 'react';
+import React from 'react'; //U: necesario despues de transformar jsx
+import { useInput } from '../../hooks/useInput';
 import { useRutasConLogin } from '../../hooks/useRutasConLogin';
-import LoginTemplate from "./LoginTemplate";
+import LoginTemplate from "./LoginTemplate"; //TODO: queremos separado o junto?
 
 export default function Login() {
-	const { login } = useRutasConLogin();
-	const [nombreUsuario, setNombreUsuario] = useState("")
-	const [contraseniaUsuario, setContraseniaUsuario] = useState("")
-	const [preLoader, setPreLoader] = useState(false)
+	const { login, consultando, api_url } = useRutasConLogin();
+	const [valores, setValores, cuandoCambiaInput]= useInput();
 
-	const handleChangeInputUsuario = (e) => {
-		setNombreUsuario(e.target.value)
-	}
-
-	const handleChangeInputContrasenia = (e) => {
-		setContraseniaUsuario(e.target.value)
-	}
-	
-	const handleClickLogin = async (e) => {
+	const cuandoPideLogin = async (e) => {
 		e.preventDefault();
-		if (contraseniaUsuario === "" || nombreUsuario === "") {
+		console.log('cuandoPideLogin',valores);
+		if ( !valores.password ||  !valores.participante ) {
       alert("Debe completar los dos campos");
     }
 		else {
-			setPreLoader(true)
-			const res = await login( nombreUsuario, contraseniaUsuario);
-			setPreLoader(false)
-
+			const res = await login( valores.participante, valores.password);
 			if (res && res.detail === "No active account found with the given credentials") {
 				alert("Usuario o contraseña incorrecto!");
 			} else {
 				console.log('Login exitoso');
 			}
+			//TODO: mudar a libreria
 		}
 	}
-
+	const p= {
+					cuandoCambiaInput,
+					cuandoPideLogin,
+					servidorApi: api_url(),
+	}
 	return (
-		preLoader
-			? 
-			<h1>Cargando...</h1>
-			:
-			<LoginTemplate 
-				onChangeUsuario={handleChangeInputUsuario} 
-				onChangePass={handleChangeInputContrasenia} 
-				onClickLogin={handleClickLogin}
-			/>
+		consultando	
+			?  <h1>Cargando... </h1>
+			: <LoginTemplate {...p} />
 	)	
-
-	
 }

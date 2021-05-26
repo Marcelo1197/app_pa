@@ -1,5 +1,7 @@
 //INFO: template usado: https://github.com/mui-org/material-ui/blob/master/docs/src/pages/getting-started/templates/sign-in/SignIn.js
 import React from 'react';
+import Copyright from '../../components/Copyright';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -14,17 +16,8 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://si.podemosaprender.org/" target="_blank">
-        PodemosAprender
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+const CFG= { //TODO: mover a un modulo todo para esto
+	PodemosAprenderLoginUrl: "https://si.podemosaprender.org/login/",
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -58,39 +51,34 @@ export default function LoginTemplate(props) {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Iniciar Sesion
+          Iniciar Sesión
         </Typography>
+				<Typography component="subtitle1">
+					{ props.servidorApi }
+				</Typography>
         <form className={classes.form} noValidate>
           <TextField
-            onChange={props.onChangeUsuario}
+            onChange={props.cuandoCambiaInput}
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email"
-            name="email"
-            autoComplete="email"
+            id="participante"
+            label="Participante"
             autoFocus
           />
           <TextField
-            onChange={props.onChangePass}
+            onChange={props.cuandoCambiaInput}
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            name="password"
             label="Contraseña"
             type="password"
             id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
           />
           <Button
-            onClick={props.onClickLogin}
+            onClick={props.cuandoPideLogin}
             type="submit"
             fullWidth
             variant="contained"
@@ -101,12 +89,12 @@ export default function LoginTemplate(props) {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href={CFG.PodemosAprenderLoginUrl} variant="body2">
                 ¿Olvidaste la contraseña?
               </Link>
             </Grid>
             <Grid item>
-              <Link href="https://si.podemosaprender.org/login/" variant="body2" target="_blank">
+              <Link href={CFG.PodemosAprenderLoginUrl} variant="body2" target="_blank">
                 {"Registrate"}
               </Link>
             </Grid>

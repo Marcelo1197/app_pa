@@ -1,5 +1,12 @@
 //INFO: utilidades generales 
 
+//S: basicos *************************************************
+export function logmsg(msg, data) {
+	const dataOk= typeof(data)=='function' ? data() : data;
+	console.log(msg, JSON.stringify(dataOk, null,2));
+}
+
+//S: arrays y objetos, set_p *********************************
 const P_SEP_RE= /([^A-Za-z0-9_\.+\$-])/;
 function parse_p(p, sepRe) { return p.split(sepRe || P_SEP_RE).slice(1); }
 function get_p_impl(dst,p,wantsCreate,max,sepRe) { //U: trae un valor en un "path" de kv/arrays anidados

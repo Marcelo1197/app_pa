@@ -7,6 +7,10 @@ const CFG = {
 	api_url: 'https://si.podemosaprender.org', //U: para usar otro servidor si queres
 }
 
+export function api_url() { //U: para mostrarla pero no cambiarla
+	return CFG.api_url;
+}
+
 //S: guardar el token aunque se cierre la app o pagina
 export function tokenGuardar(tokens, usuario) {
   //U: guarda los tokens aunque cargue de nuevo la pagina/app
@@ -70,8 +74,8 @@ export async function apiTokenNoSirve(tokenAccess) {
   const resData = await res.json();
   const sirveP = //A: devuelvo true si cumple todas las condiciones
     resData != null &&
-    typeof resData == "object" &&
-    Object.keys(resData).length == 0;
+    typeof resData === "object" &&
+    Object.keys(resData).length === 0;
   return sirveP ? null : resData; //A: null si sirve, sino la razon
 }
 
@@ -189,7 +193,7 @@ export function esErrorNecesitaLogin(ex) {
 let Generador_= null; //U: cache si ya me traje el esquema
 let GeneradorLeidoDe_= null; //U: de que servidor lo lei, para invalidarlo
 export async function apiGQL(quiereVolverALeer) {
-	if (!quiereVolverALeer && Generador_ && GeneradorLeidoDe_==CFG.api_url) { return Generador_ };
+	if (!quiereVolverALeer && Generador_ && GeneradorLeidoDe_===CFG.api_url) { return Generador_ };
 	const res= await fetchConToken({
 		query: GraphQlSchemaQuery,
 		operationName: 'IntrospectionQuery',
@@ -240,4 +244,8 @@ export function desarrolloSolamenteUrl(url) {
 	localStorage.pa_api_desarrollo= url;
 }
 
-export default { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin, apiGQL, apiModificar, apiConsultar }
+const PaApi= { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin, apiGQL, apiModificar, apiConsultar, api_url };
+
+//DBG: window.PaApi= PaApi;
+
+export default PaApi;

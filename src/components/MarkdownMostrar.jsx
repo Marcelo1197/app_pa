@@ -1,5 +1,6 @@
 //INFO: mostrar markdown en un div
 
+import React from 'react'; //U: necesario despues de transformar jsx
 import { Children, useState, useEffect, createRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from "react-router-dom";

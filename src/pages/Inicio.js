@@ -1,3 +1,4 @@
+import React from 'react'; //U: necesario despues de transformar jsx
 import MarkdownMostrar from '../components/MarkdownMostrar';
 
 export default function Inicio() {

@@ -1,5 +1,6 @@
 //INFO: editar los filtros aplicados a textos
 
+import React from 'react'; //U: necesario despues de transformar jsx
 import { fechaLegible } from '../services/pa-lib';
 
 import { makeStyles } from '@material-ui/core/styles';

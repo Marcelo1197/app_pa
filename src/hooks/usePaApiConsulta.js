@@ -29,13 +29,12 @@ export function usePaApiConsulta(consultaInicial, filtrosInicial) {
 
 		abortController= new AbortController();  //U: nuevo, para este fetch
 		setEstado('procesando');
-		const datos= await apiConsultar(consulta, filtros, abortController.signal);
+		const res= await apiConsultar(consulta, filtros, abortController.signal);
 		//DBG: console.log('usePaApiConsulta filtros y datos',filtros, JSON.stringify(res.data, null, 1));
-		//DBG: 
-		console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
+		//DBG: console.log('usePaApiConsulta', JSON.stringify(datos, null, 1));
 		//TODO: errores de red, etc
 		setEstado('listo');
-		setDatos(datos);
+		setDatos(res.datos);
 	});
 
 	useEffect(() => {

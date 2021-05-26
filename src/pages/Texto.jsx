@@ -1,5 +1,6 @@
 //INFO: mostrar un texto
 
+import React from 'react'; //U: necesario despues de transformar jsx
 import { useParams, useLocation, useHistory } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';

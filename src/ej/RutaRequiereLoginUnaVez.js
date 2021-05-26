@@ -85,7 +85,7 @@ function useProvideAuth() { //U: un hook para envolver en un contexto con el tag
 }
 
 
-const authContext = createContext(); //U: el contexto para conectar componentes que no son hijos directos, asi no tengo que pasar todo por props, un contexto es como un buzon donde vas a buscar mensajes
+const authContext = React.createContext(); //U: el contexto para conectar componentes que no son hijos directos, asi no tengo que pasar todo por props, un contexto es como un buzon donde vas a buscar mensajes
 
 function useAuth() { //U: con este hook los componentes que estan en el contexto pueden acceder
   return useContext(authContext);

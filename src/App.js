@@ -1,9 +1,14 @@
 //INFO: punto de entrada principal a la App, mantenerlo limpio, tiene que servir de indice
 
-import reportWebVitals from './reportWebVitals';
+import React, {useMemo} from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+
 
 import { ProvideServidorPodemosAprender} from './contexts/ServidorPodemosAprender';
 
+import { theme } from './Theme';
 import './index.css';
 
 import AppMenuYMarco from './components/AppMenuYMarco';
@@ -16,6 +21,7 @@ import Textos from './pages/Textos';
 import QueHago from './pages/QueHago';
 import PaginaTexto from './pages/Texto';
 import PaginaTextoEditar from './pages/TextoEditar';
+import PaginaQueHago from './pages/ToDo';
 import Charla from './pages/Charla';
 
 import PaginaModoDesarrollo from './pages/ModoDesarrollo';
@@ -34,6 +40,11 @@ const MenuYRutas = [
     dsc: 'Inicio',
     pagina: Inicio,
 		noNecesitaLogin: true,
+  },
+	{
+    path: '/ideas/que-hago',
+    dsc: '¿Qué hago?',
+    pagina: PaginaQueHago
   },
 	{
     path: '/como-voy',
@@ -112,9 +123,26 @@ const MenuYRutas = [
 ];
 
 export default function App() {
+	/*
+	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+	const theme = useMemo( () =>
+		createMuiTheme({
+			palette: {
+				type: (false && prefersDarkMode) ? 'dark' : 'light',
+				//ToDo: funciona PERO en dark no se ven links, etc.
+			},
+		}),
+		[prefersDarkMode],
+	);
+	*/
+
 	return (
-    <ProvideServidorPodemosAprender>
-			<AppMenuYMarco menu_y_rutas={MenuYRutas} />;
-    </ProvideServidorPodemosAprender>
-	)
+		<ThemeProvider theme={theme}>
+			<CssBaseline/>
+			<ProvideServidorPodemosAprender>
+				<AppMenuYMarco menu_y_rutas={MenuYRutas} />;
+			</ProvideServidorPodemosAprender>
+		</ThemeProvider>
+	);
 }

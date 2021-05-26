@@ -1,6 +1,9 @@
 //INFO: generar consultas a partir del esquema que devuelve graphene
 
 import { fechaParaTexto } from '../services/pa-lib';
+import { logmsg } from '../services/util';
+
+let DBG=0; //U: para controlar cuanto loguea este modulo
 
 export const GraphQlSchemaQuery='query IntrospectionQuery { __schema { queryType { name } mutationType { name } subscriptionType { name } types { ...FullType } directives { name description locations args { ...InputValue } } } } fragment FullType on __Type { kind name description fields(includeDeprecated: true) { name description args { ...InputValue } type { ...TypeRef } isDeprecated deprecationReason } inputFields { ...InputValue } interfaces { ...TypeRef } enumValues(includeDeprecated: true) { name description isDeprecated deprecationReason } possibleTypes { ...TypeRef } } fragment InputValue on __InputValue { name description type { ...TypeRef } defaultValue } fragment TypeRef on __Type { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name ofType { kind name } } } } } } } }'; //U: la misma que usa graphiQl de Django 
 
@@ -8,7 +11,7 @@ function simplificarType(t) {
 	if (t.ofType) {
 		let t0= t.ofType.name!=null ? t : t.ofType;
 		const r= {t: t0.ofType.name}
-		if (['SCALAR','INPUT_OBJECT'].indexOf(t0.kind)==-1 ) { r.k= t0.kind; }
+		if (['SCALAR','INPUT_OBJECT'].indexOf(t0.kind)===-1 ) { r.k= t0.kind; }
 		return r;
 	}
 	else {
@@ -23,7 +26,7 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 	s0.forEach(t => {
 		if (t.name.startsWith('__')) return;
 		//console.log(t.name,t.kind,Object.keys(t))
-		if (t.name=='Consultas') {
+		if (t.name==='Consultas') {
 			t.fields.forEach( q => {
 				const e= simplificarType(q.type);
 				e.params= {};
@@ -33,7 +36,7 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 				schemaSimple.consultas[q.name]= e;
 			});
 		}
-		else if (t.name=='Modificaciones') {
+		else if (t.name==='Modificaciones') {
 			t.fields.forEach( modif => {
 				const e= simplificarType(modif.type);
 				e.params= {};
@@ -72,35 +75,93 @@ export function schemaSimplificadoPara(unSchemaDeDjangoGrapheneRelay) {
 }
 
 function generarQueryPartes(t0, partes, filtros, schema) {
-	let t= schema.tipos[t0];
+	const tTop= schema.tipos[t0];
+	DBG>7 && logmsg('DBG:generarQueryPartes pre edges',{t0,tTop,partes,filtros});
+
+	if (tTop==null) { logmsg('ERR:generarQueryPartes tipo desconocido',{t0, tTop, partes}); }
+	if (!tTop.fields) { logmsg('ERR:generarQueryPartes faltan fields',{t0, tTop, partes}); }
+	if (!Array.isArray(partes)) { logmsg('ERR:generarQueryPartes partes no es un array',{t0, tTop, partes}); }
+
+	let partesPendientes= [];
+	let t= tTop;
 	let r= ' ';
-	let closing= '';
-	//DBG: console.log('generarQueryPartes pre edges',t0,t);
-	if (!t.fields) { console.error('generarQueryPartes faltan fields',t0, t, partes); }
-	if (t.fields.edges) { r+='edges {'; closing+='} '; t= schema.tipos[t.fields.edges.t]; }
-	if (t.fields.node) { r+='node {'; closing+='} '; t= schema.tipos[t.fields.node.t]; }
-	//DBG: console.log('generarQueryPartes after edges',t0,t);
 	partes.forEach(p => {
 		if (Array.isArray(p)) {
-			const field= t.fields[p[0]];
-			//DBG: console.log('generarQueryPartes field params',p[0], t0,field.params);
-			const param_s= generarParams(field, filtros || {}, schema)
-			r+=(p[0]+(param_s ? '('+param_s+')':'')+' { ');
+			DBG>8 && logmsg('DBG:generarQueryPartes array',{t0,p,fields:tTop.fields});
+			const field= t.fields[p[0]]; 
+			if (field==null) { 
+				DBG>7 && logmsg('DBG:generarQueryPartes array no hay field',{r,p0: p[0], t0, t, partes}); 
+				partesPendientes.push(p);
+			}
+			else {
+				const param_s= generarParams(field, filtros || {}, schema)
+				r+=(p[0] + (param_s ? '('+param_s+')':'')+' { ');
 
-			//DBG: console.log('generarQueryPartes array',p[0], t0,t);
-			const tParte= field.t
-			//DBG: console.log('generarQueryPartes array',tParte, t0,t);
-			r+= generarQueryPartes(tParte, p.slice(1), filtros, schema);
-			r+=(' } ');
+				//DBG: console.log('generarQueryPartes array',p[0], t0,t);
+				const tParte= field.t
+				DBG>8 && logmsg('DBG:generarQueryPartes array',{tParte,t0,t,r});
+				r+= generarQueryPartes(tParte, p.slice(1), filtros, schema);
+
+				r+=' } ';
+			}
 		}
 		else {
 			//DBG: console.log('PARTE',p,xt);
-			r+= p+' ';
+			const field= t.fields[p]; 
+			if (field==null) { 
+				DBG>7 && logmsg('DBG:generarQueryPartes uno no hay field',{r,p0: p[0], t0, t, partes}); 
+				partesPendientes.push(p);
+			}
+			else {
+				r+= p+' ';
+			}
 		}
 	});
-	r+=closing;
+
+	if (partesPendientes.length>0 && t.fields.edges) { 
+		r+= ' edges { ' + generarQueryPartes(t.fields.edges.t, partesPendientes, filtros, schema) + ' } ';
+	}
+	else if (partesPendientes.length>0 && t.fields.node) { 
+		r+= ' node { ' + generarQueryPartes(t.fields.node.t, partesPendientes, filtros, schema) + ' } ';
+	}
+	//TODO: alertar si aun asi quedaron pendientes!
+
 	return r;
 }
+
+function generarUnParam(t,v) { //U: solo para escalares, no listas
+	//TODO: otros tipos?
+	const vs= 
+		t.t==='DateTime'
+		? JSON.stringify(new Date(v).toISOString())
+		: t.t==='String'
+		? JSON.stringify(v+'')
+		: JSON.stringify(v);
+	return vs;
+}
+
+function generarParams(t,valores,schema, path) {
+	path= path || '';
+	const def= typeof(t)=='string' ? (schema.consultas[t] || schema.tipos[t]) : t;
+	if (def==null) { console.error('GraphQl params tipo desconocido',t); return ''; }
+	const tipo_params= def.params;
+	//DBG: console.log('generarParams',t, tipo_params);
+	const param_s= Object.entries(tipo_params).map( ([k,t]) => {
+		let v= valores[path+k] || valores['*'+k]; //U: si pongo *charlaTitulo filtra a todos los niveles
+		//TODO: agregar prefijo
+		if (v==null) { return '' } //A: no hay valor, no ponemos nada
+		if (t==null) { console.error('GraphQl parámetro tipo desconocido',k,v,t,tipo_params); return ''; }
+		//DBG: 
+		const vs= t.k==='LIST'
+			? '['+ v.map( v1 => generarUnParam(t,v1)).join(', ')+']'
+			: generarUnParam(t,v);
+		const txt= ` ${k}: ${vs} `	
+		//DBG: console.log('pa-api-graphql generarParams k,t,v,txt', k,t,v,txt);
+		return txt;
+	}).join('');
+	return param_s==='' ? null : param_s;
+}
+
 
 export function generarQuery(qm, filtros, schema) {
 	const q= schema.consultas[qm[0]] || schema.tipos[qm[0]];
@@ -121,44 +182,11 @@ export function generarQuery(qm, filtros, schema) {
 export function generarMutationDfltQuery(modificacionId, schema) {
 	const m= schema.modificaciones[modificacionId];
 	const tm= schema.tipos[m.t];
-	const tr= Object.keys(tm.fields).filter(k => k!='clientMutationId')[0];
+	const tr= Object.keys(tm.fields).filter(k => k!=='clientMutationId')[0];
 	//DBG: console.log('generarMutationDfltQuery',modificacionId,tr,tm, m);
 	const qs=  generarQueryPartes(m.t,[[tr,'id']], {}, schema);
 	//DBG: console.log('generarMutationDfltQuery',modificacionId, qs);
 	return ' { ' +qs+' } ';
-}
-
-function generarUnParam(t,v) { //U: solo para escalares, no listas
-	//TODO: otros tipos?
-	const vs= 
-		t.t=='DateTime'
-		? JSON.stringify(new Date(v).toISOString())
-		: t.t=='String'
-		? JSON.stringify(v+'')
-		: JSON.stringify(v);
-	return vs;
-}
-
-function generarParams(t,valores,schema, path) {
-	path= path || '';
-	const def= typeof(t)=='string' ? (schema.consultas[t] || schema.tipos[t]) : t;
-	if (def==null) { console.error('GraphQl params tipo desconocido',t); return ''; }
-	const tipo_params= def.params;
-	//DBG: console.log('generarParams',t, tipo_params);
-	const param_s= Object.entries(tipo_params).map( ([k,t]) => {
-		let v= valores[path+k] || valores['*'+k]; //U: si pongo *charlaTitulo filtra a todos los niveles
-		//TODO: agregar prefijo
-		if (v==null) { return '' } //A: no hay valor, no ponemos nada
-		if (t==null) { console.error('GraphQl parámetro tipo desconocido',k,v,t,tipo_params); return ''; }
-		//DBG: 
-		const vs= t.k=='LIST'
-			? '['+ v.map( v1 => generarUnParam(t,v1)).join(', ')+']'
-			: generarUnParam(t,v);
-		const txt= ` ${k}: ${vs} `	
-		//DBG: console.log('pa-api-graphql generarParams k,t,v,txt', k,t,v,txt);
-		return txt;
-	}).join('');
-	return param_s=='' ? null : param_s;
 }
 
 export function generarMutation(modificacionId, modificacionValores, query, schema) {
@@ -218,17 +246,18 @@ console.log( generarMutation(
 
 export function simplificarRespuesta(res,consultaId) { //U: siguiendo convenciones para no repetir codigo por todos lados
 	const res_data= res.data && res.data[consultaId];
+	DBG>7 && logmsg('simplificarRespuesta',{consultaId, res_data});
 
 	const simplificarDatos= (d0) => {
 		if (d0.edges) { return d0.edges.map(simplificarDatos) }
 
 		const d= d0.node || d0;	
 		const r= {};
-		Object.entries(d).map( ([k,v]) => {
+		Object.entries(d).forEach( ([k,v]) => {
 			r[k]= (
 				k.startsWith('fh') 
 				? fechaParaTexto(v) 
-				: k=='deQuien'
+				: k==='deQuien'
 				? v.username
 				: typeof(v)=='object'
 				? simplificarDatos(v)
@@ -237,8 +266,11 @@ export function simplificarRespuesta(res,consultaId) { //U: siguiendo convencion
 		});
 		return r;
 	}
-
-	const datos= simplificarDatos(res_data || []);
+	//TODO: errores?
+	const datos= {
+		datos: simplificarDatos(res_data || []), 
+		pageInfo: res_data?.pageInfo
+	};
 	//DBG: console.log('GraphQl simplificarRespuesta',consultaId, datos,res)
 	return datos;
 }
@@ -252,3 +284,4 @@ export default function GraphqlGeneradorPara(schemaDeGrapheneDjango) {
 		simplificarRespuesta: simplificarRespuesta,
 	};
 }
+

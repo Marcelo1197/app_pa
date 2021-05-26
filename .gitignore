@@ -1,3 +1,9 @@
+# Generamos automaticamente copiando BabelRc.*
+.babelrc
+
+
+cache/
+
 # Logs
 logs
 *.log

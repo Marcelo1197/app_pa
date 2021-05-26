@@ -5,16 +5,13 @@
 
 ////////////////////////////////////////////////////////////
 //S: que necesitamos
-import { useContext, createContext, useState, useEffect } from "react";
+import React, { useContext, createContext, useState, useEffect } from "react";
 
 import PaApi from "../services/pa-api";
-/* DBG { 
-window.PaApi= PaApi;
-} DBG  */
 
 ////////////////////////////////////////////////////////////
 //S: el contexto
-const ServidorPodemosAprenderContext = createContext(); //U: el contexto para conectar componentes que no son hijos directos, asi no tengo que pasar todo por props, un contexto es como un buzon donde vas a buscar mensajes
+const ServidorPodemosAprenderContext = React.createContext(); //U: el contexto para conectar componentes que no son hijos directos, asi no tengo que pasar todo por props, un contexto es como un buzon donde vas a buscar mensajes
 
 export function useServidorPodemosAprender() { //U: tus componentes que estan en el contexto pueden acceder con este hook
   return useContext(ServidorPodemosAprenderContext);
@@ -24,6 +21,8 @@ export function useServidorPodemosAprender() { //U: tus componentes que estan en
 function useProvideServidorPodemosAprender() { //U: este se usa en el componente provider para envolver los hijos en este contexto
 	const USUARIO_NO_SE= {usuario: 'no se'}
   const [usuario, setUsuario] = useState(USUARIO_NO_SE); //U: devuelve usuario y eso lo hace reactivo (actualiza otros)
+	const [consultando, setConsultando]= useState(0); //U: si estamos esperando un fetch
+
 	//TODO: agregamos otro estado para ultimo mensaje de error?
 
 	useEffect(() => {
@@ -37,15 +36,17 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
 			else {
 				setUsuario( null );
 			}
-
 		})();
 	}, []);
 
   const login = (usuario, pass) => {
+		setConsultando(consultando+1);
     return (
 			PaApi.apiLogin(usuario, pass)
-				.then( (res) => { setUsuario(usuario); return res; }) //A: me guardo usuario, avisa a otros componentes
-				.catch( (err) => { setUsuario(null); throw(err); } ) //A: tambien si fallo
+				.then( (res) => { setConsultando(consultando-1); 
+					setUsuario(usuario); return res; }) //A: me guardo usuario, avisa a otros componentes
+				.catch( (err) => { setConsultando(consultando-1); 
+					setUsuario(null); throw(err); } ) //A: tambien si fallo
 		);
   }
 
@@ -61,9 +62,13 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
   }
 
 	const fetch = (query) => {
+		setConsultando(consultando+1);
 		return (
 			PaApi.fetchConToken(query)
-				.catch( (err) => { 
+				.then ( r => { setConsultando(consultando-1);
+					return r;
+				})
+				.catch( (err) => { setConsultando(consultando-1);
 					if (PaApi.esErrorNecesitaLogin(err)) {
 						setUsuario(null);
 					}
@@ -81,6 +86,8 @@ function useProvideServidorPodemosAprender() { //U: este se usa en el componente
 		fetch, //OBSOLETO, usar 'consultar' y 'modificar'
 		consultar: PaApi.apiConsultar,//U: para enviar y traer datos via graphql	
 		modificar: PaApi.apiModificar,//U: para enviar y traer datos via graphql	
+		consultando, //U: para saber si estamos esperando requests
+		api_url: PaApi.api_url, //U: para mostrar ej en login
   };
 }
 
@@ -95,5 +102,9 @@ export function ProvideServidorPodemosAprender({ children }) { //U: el component
     </ServidorPodemosAprenderContext.Provider>
   );
 }
+
+/* DBG {*/ 
+window.PaApi= PaApi;
+/* } DBG  */
 
 

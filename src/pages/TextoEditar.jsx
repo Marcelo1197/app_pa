@@ -5,11 +5,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';
+import { useUrlSearchParams } from '../hooks/useUrlSearchParams';
 import { markdownTransformarHTML, fechaLegible, fechasSonIguales, fechaParaTexto } from '../services/pa-lib';
 import MarkdownMostrar from '../components/MarkdownMostrar';
 
 //VER: https://material-ui.com/components/textarea-autosize/#textarea-autosize
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import TextField from '@material-ui/core/TextField';
+
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
@@ -52,6 +55,7 @@ export default function PaginaTextoEditar(props) {
 	const reactLocation = useLocation();
 	const [datos, setDatos]= useState({...reactLocation.state, textoId: textoid })
 	//A: el link puede pasar datos en location, sino los vamos a tener que buscar del servidor
+	const urlSearchParams= useUrlSearchParams(); //A: ej fh_max=2021-05-12
 
 	const [quiereVistaPrevia, setQuiereVistaPrevia]= useState(false);
 	const [snackAbierto, setSnackAbierto]= useState(false);
@@ -61,11 +65,11 @@ export default function PaginaTextoEditar(props) {
 		const id0= datos.textoId=='nuevo' ? null : datos.textoId;
 		const res= await apiModificar(
 			'textoModificar',
-			{texto: datos.texto, id: id0},
+			{texto: datos.texto, charlaTitulo: datos.charla, orden: datos.orden, id: id0},
 			['texto','id','fhEditado']
 		);
 		//DBG: console.log('PaginaTextoEditar cuandoQuiereGuardar guardó',res);
-		const res_texto= res.data.textoModificar.texto; 
+		const res_texto= res.texto; 
 		//DBG: console.log('PaginaTextoEditar cuandoQuiereGuardar guardó datos',JSON.stringify(datos,null,2));
 		setDatos({ ...datos, textoId: res_texto.id, fhEditado: res_texto.fhEditado});
 		history.replace({...reactLocation, pathname: '/texto_editar/'+res_texto.id, state: datos});
@@ -85,7 +89,7 @@ export default function PaginaTextoEditar(props) {
 					Textos	
 				</Link>
 				<>
-				De { datos.deQuien||'vos' } { fechaLegible(datos.fhCreado || new Date()) }
+				  De { datos.deQuien||'vos' } { fechaLegible(datos.fhCreado || new Date()) }
 				</>
 			</Breadcrumbs>
 
@@ -109,6 +113,22 @@ export default function PaginaTextoEditar(props) {
 			<Container fluid
 				style={{position: 'relative'}}
 			>
+				<div>
+					<TextField
+						onChange={(e) => setDatos({...datos, charla: e.target.value})}
+						label="Charla"
+						defaultValue="#borrame"
+						variant="outlined"
+						size="small"
+					/>
+					<TextField
+						onChange={(e) => setDatos({...datos, orden: e.target.value})}
+						label="Orden"
+						defaultValue=""
+						variant="outlined"
+						size="small"
+					/>
+				</div>
 				<textarea style={{width: '100%', minHeight: '20em'}}
 					onChange={(e) => setDatos({...datos, texto: e.target.value})}
 					onKeyDown={cuandoTeclasEspeciales}
@@ -117,10 +137,10 @@ export default function PaginaTextoEditar(props) {
 				</textarea>
 				{ quiereVistaPrevia 
 					? (
-							<MarkdownMostrar contexto={datos} style={{position: 'absolute', top: 0, minHeight: '20em', width: '100%', background: 'white'}}>
-								{datos.texto||'_(todavía no escribiste nada)_'}
-							</MarkdownMostrar>
-						)
+						<MarkdownMostrar contexto={datos} style={{position: 'absolute', top: 0, minHeight: '20em', width: '100%', background: 'white'}}>
+							{datos.texto||'_(todavía no escribiste nada)_'}
+						</MarkdownMostrar>
+					)
 					: null
 				}
 			</Container>

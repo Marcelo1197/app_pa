@@ -1,5 +1,6 @@
 //INFO: opciones y configuración para desarrollar
 
+import React from 'react'; //U: necesario despues de transformar jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useServidorPodemosAprender } from '../contexts/ServidorPodemosAprender';

@@ -25,6 +25,14 @@ export function useRutasConLogin() {
 			.then(() => history.push('/'));
 	};
 
-	return {login, rutaDeDondeViene, logout, usuario: servidorPodemosAprender.usuario, history};
+	return {
+		login, 
+		rutaDeDondeViene, 
+		logout, 
+		usuario: servidorPodemosAprender.usuario, 
+		history,
+		consultando: servidorPodemosAprender.consultando,
+		api_url: servidorPodemosAprender.api_url,
+	};
 }
 
