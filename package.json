@@ -32,5 +32,10 @@
     ">0.2%",
     "not dead"
   ],
-  "engines": {}
+  "engines": {
+    "node": "12"
+  },
+  "glitch": {
+    "projectType": "generated_static"
+  }
 }
