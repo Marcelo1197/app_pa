@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Una UI para PodemosAprender con React y MaterialUI",
   "scripts": {
-    "start": "vite >x.log",
+    "start": "vite",
     "build": "vite build",
     "serve": "vite preview"
   },
