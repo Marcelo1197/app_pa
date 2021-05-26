@@ -20,7 +20,9 @@ const CFG= { //TODO: mover a un modulo todo para esto
 	PodemosAprenderLoginUrl: "https://si.podemosaprender.org/login/",
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => {
+  console.log('THEME',theme);
+  return {
   paper: {
     marginTop: theme.spacing(8),
     display: 'flex',
@@ -38,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
+}});
 
 export default function LoginTemplate(props) {
   const classes = useStyles();
