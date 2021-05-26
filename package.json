@@ -33,7 +33,7 @@
     "not dead"
   ],
   "engines": {
-    "node": "12"
+    "node": ">12"
   },
   "glitch": {
     "projectType": "generated_static"
