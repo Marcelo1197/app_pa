@@ -1,8 +1,7 @@
 //INFO: punto de entrada principal a la App, mantenerlo limpio, tiene que servir de indice
 
-import React, {useMemo} from 'react';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import React from 'react';
+import { ThemeProvider } from './ThemeProvider.js';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 
@@ -34,23 +33,23 @@ const MenuYRutas = [
 		noNecesitaLogin: true,
 		//A: sin descripcion no se muestra en el menu
 	},
-	
-  {
-    path: '/',
-    dsc: 'Inicio',
-    pagina: Inicio,
+
+	{
+		path: '/',
+		dsc: 'Inicio',
+		pagina: Inicio,
 		noNecesitaLogin: true,
-  },
+	},
 	{
-    path: '/ideas/que-hago',
-    dsc: '¿Qué hago?',
-    pagina: PaginaQueHago
-  },
+		path: '/ideas/que-hago',
+		dsc: '¿Qué hago?',
+		pagina: PaginaQueHago
+	},
 	{
-    path: '/como-voy',
-    dsc: '¿Cómo voy?',
-  },
- 	{
+		path: '/como-voy',
+		dsc: '¿Cómo voy?',
+	},
+	{
 		dsc: '¿Me hablan a mi?',
 		accion: ({history, usuario}) => {
 			history.push({ pathname: '/textos', search: `?charla=@${usuario}` });
@@ -62,37 +61,37 @@ const MenuYRutas = [
 			history.push({ pathname: '/textos', search: `?charla=${encodeURIComponent('#plan_de_participante_'+usuario)}` });
 		},
 	},
-  {
-    path: '/texto/:textoid',
-		esPrefijo: true,
-    pagina: PaginaTexto,
-  },
 	{
-    path: '/texto_editar/:textoid',
+		path: '/texto/:textoid',
 		esPrefijo: true,
-    pagina: PaginaTextoEditar,
-  },
+		pagina: PaginaTexto,
+	},
 	{
-    path: '/charla/:charlaid',
+		path: '/texto_editar/:textoid',
 		esPrefijo: true,
-    pagina: Charla,
-  },
+		pagina: PaginaTextoEditar,
+	},
 	{
-    path: '/textos/',
+		path: '/charla/:charlaid',
+		esPrefijo: true,
+		pagina: Charla,
+	},
+	{
+		path: '/textos/',
 		esPrefijo: true, //A: necesita para queryParams ej ?fecha_min=
 		dsc: 'Textos',
-    pagina: Textos,
-  },
+		pagina: Textos,
+	},
 	{
 		dsc: 'Texto Nuevo',
-  	accion: ({history, usuario}) => {
+		accion: ({history}) => {
 			history.push({ pathname: '/texto_editar/nuevo' });
 		},
 	},
 
 	{ divisor: true },
-  {
-    dsc: 'Logout',
+	{
+		dsc: 'Logout',
 		accion: (contexto) => { 
 			//DBG: console.log('Logout'); 
 			contexto.logout(); 
@@ -101,18 +100,18 @@ const MenuYRutas = [
 
 	{ seccion: 'Modo desarrollo' },
 	{
-    path: '/devel/',
+		path: '/devel/',
 		dsc: 'Servidor',
-    pagina: PaginaModoDesarrollo,
+		pagina: PaginaModoDesarrollo,
 		noNecesitaLogin: true,
-  },
+	},
 
 	{
-    path: '/ideas/que-hago',
-    dsc: '(idea) ¿Qué hago?',
-    pagina: QueHago.PaginaQueHago,
-    icono: <QueHago.IconoQueHago />,
-  },
+		path: '/ideas/que-hago',
+		dsc: '(idea) ¿Qué hago?',
+		pagina: QueHago.PaginaQueHago,
+		icono: <QueHago.IconoQueHago />,
+	},
 
 
 	{
@@ -123,24 +122,6 @@ const MenuYRutas = [
 ];
 
 export default function App() {
-	
-	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-	const theme = useMemo( () =>
-		createMuiTheme({
-			palette: {
-				type: (false && prefersDarkMode) ? 'dark' : 'light',
-				//ToDo: funciona PERO en dark no se ven links, etc.
-        background: {
-          default: '#eee',
-          paper: '#fff'
-        }
-			},
-		}),
-		[prefersDarkMode],
-	);
-	
-
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline/>
