@@ -69,7 +69,7 @@ export default function PaginaTextoEditar(props) {
 			['texto','id','fhEditado']
 		);
 		//DBG: console.log('PaginaTextoEditar cuandoQuiereGuardar guardó',res);
-		const res_texto= res.texto; 
+		const res_texto= res.datos.texto; 
 		//DBG: console.log('PaginaTextoEditar cuandoQuiereGuardar guardó datos',JSON.stringify(datos,null,2));
 		setDatos({ ...datos, textoId: res_texto.id, fhEditado: res_texto.fhEditado});
 		history.replace({...reactLocation, pathname: '/texto_editar/'+res_texto.id, state: datos});

@@ -217,7 +217,9 @@ export async function apiModificar(modificacionId, valores, query) { //U: genera
 	const res= await fetchConToken({ query: qs });	
 	//DBG: 
   console.log(JSON.stringify(res,null,1));
-	return res; //api.simplificarRespuesta (res, modificacionId);
+  const datos = api.simplificarRespuesta (res, modificacionId);
+  console.log(JSON.stringify(datos,null,1));
+	return datos;
 }
 
 export async function apiConsultar(query, filtros, signal) { //U: genera y ejecuta consula graphql
