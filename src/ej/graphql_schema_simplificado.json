@@ -1,0 +1,571 @@
+{
+	"tipos": {
+		"String": {},
+		"TextoNode": {
+			"fields": {
+				"id": {
+					"t": "ID",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"deQuien": {
+					"t": "UserNode",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"fhCreado": {
+					"t": "DateTime",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"fhEditado": {
+					"t": "DateTime",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"titulo": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"texto": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"charlaSet": {
+					"t": "CharlaNodeConnection",
+					"k": "NON_NULL",
+					"params": {
+						"offset": {
+							"t": "Int"
+						},
+						"before": {
+							"t": "String"
+						},
+						"after": {
+							"t": "String"
+						},
+						"first": {
+							"t": "Int"
+						},
+						"last": {
+							"t": "Int"
+						},
+						"deQuien_Username": {
+							"t": "String"
+						},
+						"fhCreado_Gt": {
+							"t": "DateTime"
+						},
+						"fhCreado_Lt": {
+							"t": "DateTime"
+						},
+						"titulo_Icontains": {
+							"t": "String"
+						}
+					}
+				},
+				"charlaitemSet": {
+					"t": "CharlaItemNodeConnection",
+					"k": "NON_NULL",
+					"params": {
+						"offset": {
+							"t": "Int"
+						},
+						"before": {
+							"t": "String"
+						},
+						"after": {
+							"t": "String"
+						},
+						"first": {
+							"t": "Int"
+						},
+						"last": {
+							"t": "Int"
+						},
+						"textoId": {
+							"t": "ID"
+						},
+						"charlaId": {
+							"t": "ID"
+						},
+						"charla_Titulo": {
+							"t": "String"
+						},
+						"charla_Titulo_Icontains": {
+							"t": "String"
+						}
+					}
+				}
+			}
+		},
+		"Node": {
+			"fields": {
+				"id": {
+					"t": "ID",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"ID": {},
+		"UserNode": {
+			"fields": {
+				"id": {
+					"t": "ID",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"username": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"DateTime": {},
+		"CharlaNodeConnection": {
+			"fields": {
+				"pageInfo": {
+					"t": "PageInfo",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"edges": {
+					"t": "CharlaNodeEdge",
+					"k": "LIST",
+					"params": {}
+				}
+			}
+		},
+		"PageInfo": {
+			"fields": {
+				"hasNextPage": {
+					"t": "Boolean",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"hasPreviousPage": {
+					"t": "Boolean",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"startCursor": {
+					"t": "String",
+					"params": {}
+				},
+				"endCursor": {
+					"t": "String",
+					"params": {}
+				}
+			}
+		},
+		"Boolean": {},
+		"CharlaNodeEdge": {
+			"fields": {
+				"node": {
+					"t": "CharlaNode",
+					"params": {}
+				},
+				"cursor": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"CharlaNode": {
+			"fields": {
+				"id": {
+					"t": "ID",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"deQuien": {
+					"t": "UserNode",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"fhCreado": {
+					"t": "DateTime",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"titulo": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"textos": {
+					"t": "TextoNodeConnection",
+					"k": "NON_NULL",
+					"params": {
+						"offset": {
+							"t": "Int"
+						},
+						"before": {
+							"t": "String"
+						},
+						"after": {
+							"t": "String"
+						},
+						"first": {
+							"t": "Int"
+						},
+						"last": {
+							"t": "Int"
+						}
+					}
+				},
+				"charlaitemSet": {
+					"t": "CharlaItemNodeConnection",
+					"k": "NON_NULL",
+					"params": {
+						"offset": {
+							"t": "Int"
+						},
+						"before": {
+							"t": "String"
+						},
+						"after": {
+							"t": "String"
+						},
+						"first": {
+							"t": "Int"
+						},
+						"last": {
+							"t": "Int"
+						},
+						"textoId": {
+							"t": "ID"
+						},
+						"charlaId": {
+							"t": "ID"
+						},
+						"charla_Titulo": {
+							"t": "String"
+						},
+						"charla_Titulo_Icontains": {
+							"t": "String"
+						}
+					}
+				}
+			}
+		},
+		"TextoNodeConnection": {
+			"fields": {
+				"pageInfo": {
+					"t": "PageInfo",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"edges": {
+					"t": "TextoNodeEdge",
+					"k": "LIST",
+					"params": {}
+				}
+			}
+		},
+		"TextoNodeEdge": {
+			"fields": {
+				"node": {
+					"t": "TextoNode",
+					"params": {}
+				},
+				"cursor": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"Int": {},
+		"CharlaItemNodeConnection": {
+			"fields": {
+				"pageInfo": {
+					"t": "PageInfo",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"edges": {
+					"t": "CharlaItemNodeEdge",
+					"k": "LIST",
+					"params": {}
+				}
+			}
+		},
+		"CharlaItemNodeEdge": {
+			"fields": {
+				"node": {
+					"t": "CharlaItemNode",
+					"params": {}
+				},
+				"cursor": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"CharlaItemNode": {
+			"fields": {
+				"id": {
+					"t": "ID",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"charla": {
+					"t": "CharlaNode",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"texto": {
+					"t": "TextoNode",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"orden": {
+					"t": "String",
+					"k": "NON_NULL",
+					"params": {}
+				},
+				"nivel": {
+					"t": "Int",
+					"k": "NON_NULL",
+					"params": {}
+				}
+			}
+		},
+		"TextoModificarPayload": {
+			"fields": {
+				"texto": {
+					"t": "TextoNode",
+					"params": {}
+				},
+				"clientMutationId": {
+					"t": "String",
+					"params": {}
+				}
+			}
+		},
+		"TextoModificarInput": {
+			"params": {
+				"texto": {
+					"t": "String",
+					"k": "NON_NULL"
+				},
+				"id": {
+					"t": "ID"
+				},
+				"charlaTitulo": {
+					"t": "String"
+				},
+				"orden": {
+					"t": "String"
+				},
+				"clientMutationId": {
+					"t": "String"
+				}
+			}
+		},
+		"CharlaItemModificarPayload": {
+			"fields": {
+				"charlaitem": {
+					"t": "CharlaItemNode",
+					"params": {}
+				},
+				"clientMutationId": {
+					"t": "String",
+					"params": {}
+				}
+			}
+		},
+		"CharlaItemModificarInput": {
+			"params": {
+				"textoId": {
+					"t": "ID",
+					"k": "NON_NULL"
+				},
+				"charlaTitulo": {
+					"t": "String",
+					"k": "NON_NULL"
+				},
+				"orden": {
+					"t": "String"
+				},
+				"clientMutationId": {
+					"t": "String"
+				}
+			}
+		}
+	},
+		"consultas": {
+			"hola": {
+				"t": "String",
+				"params": {}
+			},
+			"texto": {
+				"t": "TextoNode",
+				"params": {
+					"id": {
+						"t": "ID",
+						"k": "NON_NULL"
+					}
+				}
+			},
+			"textoLista": {
+				"t": "TextoNodeConnection",
+				"params": {
+					"orderBy": {
+						"t": "String",
+						"k": "LIST"
+					},
+					"offset": {
+						"t": "Int"
+					},
+					"before": {
+						"t": "String"
+					},
+					"after": {
+						"t": "String"
+					},
+					"first": {
+						"t": "Int"
+					},
+					"last": {
+						"t": "Int"
+					},
+					"fhCreado_Gt": {
+						"t": "DateTime"
+					},
+					"fhCreado_Lt": {
+						"t": "DateTime"
+					},
+					"fhEditado_Gt": {
+						"t": "DateTime"
+					},
+					"fhEditado_Lt": {
+						"t": "DateTime"
+					},
+					"deQuien_Username": {
+						"t": "String"
+					},
+					"charla_Titulo": {
+						"t": "String"
+					}
+				}
+			},
+			"charla": {
+				"t": "CharlaNode",
+				"params": {
+					"id": {
+						"t": "ID",
+						"k": "NON_NULL"
+					}
+				}
+			},
+			"charlaLista": {
+				"t": "CharlaNodeConnection",
+				"params": {
+					"orderBy": {
+						"t": "String",
+						"k": "LIST"
+					},
+					"offset": {
+						"t": "Int"
+					},
+					"before": {
+						"t": "String"
+					},
+					"after": {
+						"t": "String"
+					},
+					"first": {
+						"t": "Int"
+					},
+					"last": {
+						"t": "Int"
+					},
+					"deQuien_Username": {
+						"t": "String"
+					},
+					"fhCreado_Gt": {
+						"t": "DateTime"
+					},
+					"fhCreado_Lt": {
+						"t": "DateTime"
+					},
+					"titulo_Icontains": {
+						"t": "String"
+					}
+				}
+			},
+			"charlaitem": {
+				"t": "CharlaItemNode",
+				"params": {
+					"id": {
+						"t": "ID",
+						"k": "NON_NULL"
+					}
+				}
+			},
+			"charlaitemLista": {
+				"t": "CharlaItemNodeConnection",
+				"params": {
+					"orderBy": {
+						"t": "String",
+						"k": "LIST"
+					},
+					"offset": {
+						"t": "Int"
+					},
+					"before": {
+						"t": "String"
+					},
+					"after": {
+						"t": "String"
+					},
+					"first": {
+						"t": "Int"
+					},
+					"last": {
+						"t": "Int"
+					},
+					"textoId": {
+						"t": "ID"
+					},
+					"charlaId": {
+						"t": "ID"
+					},
+					"charla_Titulo": {
+						"t": "String"
+					},
+					"charla_Titulo_Icontains": {
+						"t": "String"
+					}
+				}
+			}
+		},
+		"modificaciones": {
+			"textoModificar": {
+				"t": "TextoModificarPayload",
+				"params": {
+					"input": {
+						"t": "TextoModificarInput",
+						"k": "NON_NULL"
+					}
+				}
+			},
+			"charlaitemCrear": {
+				"t": "CharlaItemModificarPayload",
+				"params": {
+					"input": {
+						"t": "CharlaItemModificarInput",
+						"k": "NON_NULL"
+					}
+				}
+			}
+		}
+}
