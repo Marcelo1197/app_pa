@@ -56,10 +56,12 @@ function ComponenteQueUsaContexto(props) {
 			<h2>Soy el componente {props.nombre}</h2>
 			<p>El valor compartido es {contextoConsola.unValor}</p>
 			<p>Ultima actualización {new Date()+''}</p>
+      <p>Mi valor escrito aca: {miValor}</p>
 			<p>
 				<input onChange={ (e) => setMiValor(e.target.value) } />
 				<button onClick={ () => contextoConsola.cambiarValorDesdeReact(miValor) }>Actualizar contexto</button>
 			</p>
+      
 		</div>
 	)	
 }
