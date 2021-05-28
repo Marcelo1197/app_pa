@@ -25,7 +25,7 @@ Puede que algunas opciones del menú te pidan usuario y clave, si todavía no lo
 3. Aprovecha y asociá todas tus cuentas
 4. Agregale una clave a tu cuenta
 
-Se puede desplegar en glitch
+Hola amigo
 
 		`}
 		</MarkdownMostrar>
