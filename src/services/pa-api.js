@@ -1,20 +1,21 @@
 //INFO: API REST CON TOKEN en si.podemosaprender.org
 // escribo funciones que se puedan probar por separado, despues las junto
 
-import GraphqlGeneradorPara, {GraphQlSchemaQuery} from './pa-api-graphql';
+import GraphqlGeneradorPara, { GraphQlSchemaQuery } from "./pa-api-graphql";
 
 const CFG = {
-	api_url: 'https://si.podemosaprender.org', //U: para usar otro servidor si queres
-}
+  api_url: "https://si.podemosaprender.org", //U: para usar otro servidor si queres
+};
 
-export function api_url() { //U: para mostrarla pero no cambiarla
-	return CFG.api_url;
+export function api_url() {
+  //U: para mostrarla pero no cambiarla
+  return CFG.api_url;
 }
 
 //S: guardar el token aunque se cierre la app o pagina
 export function tokenGuardar(tokens, usuario) {
   //U: guarda los tokens aunque cargue de nuevo la pagina/app
-	tokens.api_url= CFG.api_url; //A: me guardo la url de donde los obtuve
+  tokens.api_url = CFG.api_url; //A: me guardo la url de donde los obtuve
   localStorage.tokens = JSON.stringify(tokens);
   localStorage.usuario = usuario;
 }
@@ -41,8 +42,8 @@ export function usuarioLeer() {
 
 export function tokenBorrar() {
   //U: ej para cerrar sesion en navegador publico
-  localStorage.tokens = '';
-  localStorage.usuario = '';
+  localStorage.tokens = "";
+  localStorage.usuario = "";
   //TODO: ademas deberia invalidarlo en el servidor
 }
 
@@ -95,25 +96,24 @@ export async function apiTokenRenovar(tokenRefresh) {
 
 //S: integro acceso a la api y guardar localmente
 export async function apiLogin(usr, pass) {
-	try {
-		const res = await apiTokenConseguir(usr, pass);
-		if (res.access) { //A: fue bien
-			tokenGuardar(res, usr);
-			return {}; //A: si no hay detail ni error es ok
-		}
-		else {
-			return {...res, error: res.detail || 'error desconocido'};
-		}
-	}
-	catch (ex) {
-		return {error: ex.message || 'error desconocido'}
-	}
+  try {
+    const res = await apiTokenConseguir(usr, pass);
+    if (res.access) {
+      //A: fue bien
+      tokenGuardar(res, usr);
+      return {}; //A: si no hay detail ni error es ok
+    } else {
+      return { ...res, error: res.detail || "error desconocido" };
+    }
+  } catch (ex) {
+    return { error: ex.message || "error desconocido" };
+  }
 }
 
 export async function apiLogout() {
-	tokenBorrar();
-	//TODO: invalidarlo en el servidor, por eso la declaramos async
-	return true;
+  tokenBorrar();
+  //TODO: invalidarlo en el servidor, por eso la declaramos async
+  return true;
 }
 
 export async function apiNecesitoLoginP() {
@@ -132,45 +132,46 @@ export async function apiNecesitoLoginP() {
   return result;
 }
 
-const ErrorMsgNecesitaLogin= 'PaApi fetchConToken no tengo token, llamaste apiLogin?';
+const ErrorMsgNecesitaLogin =
+  "PaApi fetchConToken no tengo token, llamaste apiLogin?";
 
-export async function fetchConToken(data, opciones, url, noQuiereJson) { //U: hace fetch agregando token, y con defaults
+export async function fetchConToken(data, opciones, url, noQuiereJson) {
+  //U: hace fetch agregando token, y con defaults
   //U: agrega el token a un fetch
   const tok = tokenLeer();
   if (!tok || !tok.access) {
     throw new Error(ErrorMsgNecesitaLogin);
   }
 
-	url= url || '/graphql/'; //DFLT 
-	if (! url.startsWith('http') ) {
-		url= CFG.api_url+url;
-	}
+  url = url || "/graphql/"; //DFLT
+  if (!url.startsWith("http")) {
+    url = CFG.api_url + url;
+  }
 
   opciones = opciones || {};
   opciones.headers = opciones.headers || {};
   opciones.headers.Authorization = "Bearer " + tok.access;
 
-	if (data!=null) {
-		if (typeof(data)=='object') {
-			opciones.body= JSON.stringify(data);
-		}
-		else {
-			opciones.body= data;
-		}
-		opciones.method= opciones.method || 'POST';
-		opciones.headers= opciones.headers || {};
-		opciones.headers['Content-Type']= opciones.headers['Content-Type'] || 'application/json';
-	}	
+  if (data != null) {
+    if (typeof data == "object") {
+      opciones.body = JSON.stringify(data);
+    } else {
+      opciones.body = data;
+    }
+    opciones.method = opciones.method || "POST";
+    opciones.headers = opciones.headers || {};
+    opciones.headers["Content-Type"] =
+      opciones.headers["Content-Type"] || "application/json";
+  }
 
-	//TODO: excepcion token expiro?
-  const res= await fetch(url, opciones);
-	if (noQuiereJson) { 
-		return res;
-	}
-	else {
-		const data= await res.json();
-		return data;
-	}
+  //TODO: excepcion token expiro?
+  const res = await fetch(url, opciones);
+  if (noQuiereJson) {
+    return res;
+  } else {
+    const data = await res.json();
+    return data;
+  }
 }
 //TEST: fetchConToken('https://si.podemosaprender.org/api/token/user/').then(console.log)
 // Object { user: "mauriciocap", auth: "eyJ0eXA..." }
@@ -185,66 +186,77 @@ fetchData('http://127.0.0.1:8000/graphql',{method:'POST', headers: {
 */
 
 export function esErrorNecesitaLogin(ex) {
-	return ex.message === ErrorMsgNecesitaLogin;
+  return ex.message === ErrorMsgNecesitaLogin;
 }
-
 
 //S: API y graphql *******************************************
-let Generador_= null; //U: cache si ya me traje el esquema
-let GeneradorLeidoDe_= null; //U: de que servidor lo lei, para invalidarlo
+let Generador_ = null; //U: cache si ya me traje el esquema
+let GeneradorLeidoDe_ = null; //U: de que servidor lo lei, para invalidarlo
 export async function apiGQL(quiereVolverALeer) {
-	if (!quiereVolverALeer && Generador_ && GeneradorLeidoDe_===CFG.api_url) { return Generador_ };
-	const res= await fetchConToken({
-		query: GraphQlSchemaQuery,
-		operationName: 'IntrospectionQuery',
-	});	
-	//TODO: control de errores
-	Generador_= GraphqlGeneradorPara(res);	
-	GeneradorLeidoDe_= CFG.api_url;
-	//DBG: console.log(JSON.stringify(Generador_.schema,null,2));
-	return Generador_;
+  if (!quiereVolverALeer && Generador_ && GeneradorLeidoDe_ === CFG.api_url) {
+    return Generador_;
+  }
+  const res = await fetchConToken({
+    query: GraphQlSchemaQuery,
+    operationName: "IntrospectionQuery",
+  });
+  //TODO: control de errores
+  Generador_ = GraphqlGeneradorPara(res);
+  GeneradorLeidoDe_ = CFG.api_url;
+  //DBG: console.log(JSON.stringify(Generador_.schema,null,2));
+  return Generador_;
 }
 
-//VER: test/services/pa-api-todo.test.js 
-		
-export async function apiModificar(modificacionId, valores, query) { //U: genera y ejecuta mutation graphQl
-	const api= await apiGQL();
-	const qs= api.modificacion(
-		modificacionId,	
-		valores,	
-		query
-	);
-	const res= await fetchConToken({ query: qs });	
-	//DBG: console.log(JSON.stringify(res,null,1));
-	return api.simplificarRespuesta(res, modificacionId);
+//VER: test/services/pa-api-todo.test.js
+
+export async function apiModificar(modificacionId, valores, query) {
+  //U: genera y ejecuta mutation graphQl
+  const api = await apiGQL();
+  const qs = api.modificacion(modificacionId, valores, query);
+  const res = await fetchConToken({ query: qs });
+  //DBG:
+  console.log(JSON.stringify(res, null, 1));
+  const datos = api.simplificarRespuesta(res, modificacionId);
+  console.log(JSON.stringify(datos, null, 1));
+  return datos;
 }
 
-export async function apiConsultar(query, filtros, signal) { //U: genera y ejecuta consula graphql
-	const api= await apiGQL();
-	const qs= api.consulta(
-		query,	
-		filtros	
-	);
-	console.log('apiConsultar',qs,query,filtros);
-	const res= await fetchConToken({query: qs}, {signal});
-	return api.simplificarRespuesta(res, query[0]);
+export async function apiConsultar(query, filtros, signal) {
+  //U: genera y ejecuta consula graphql
+  const api = await apiGQL();
+  const qs = api.consulta(query, filtros);
+  console.log("apiConsultar", qs, query, filtros);
+  const res = await fetchConToken({ query: qs }, { signal });
+  return api.simplificarRespuesta(res, query[0]);
 }
-
 
 //S: solo para desarrollo, SEC: nunca en prod ################
 //SEC: si nos cambian la url via javascript en un texto, nos pueden hacer mandar user y pass a cualquier servidor
 export function desarrolloSolamenteInit() {
-	const u= localStorage.pa_api_desarrollo;
-	if (u) { CFG.api_url= u }
-	return CFG.api_url;
+  const u = localStorage.pa_api_desarrollo;
+  if (u) {
+    CFG.api_url = u;
+  }
+  return CFG.api_url;
 }
 
 export function desarrolloSolamenteUrl(url) {
-	CFG.api_url= url;
-	localStorage.pa_api_desarrollo= url;
+  CFG.api_url = url;
+  localStorage.pa_api_desarrollo = url;
 }
 
-const PaApi= { fetchConToken, apiLogin, apiLogout, apiNecesitoLoginP, usuarioLeer, esErrorNecesitaLogin, apiGQL, apiModificar, apiConsultar, api_url };
+const PaApi = {
+  fetchConToken,
+  apiLogin,
+  apiLogout,
+  apiNecesitoLoginP,
+  usuarioLeer,
+  esErrorNecesitaLogin,
+  apiGQL,
+  apiModificar,
+  apiConsultar,
+  api_url,
+};
 
 //DBG: window.PaApi= PaApi;
 
